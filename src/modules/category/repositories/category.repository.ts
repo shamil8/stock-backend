@@ -1,0 +1,50 @@
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { CategoryDto } from '../dto/command/categoryDto';
+import { CategoryEntity } from '../entities/category.entity';
+
+@Injectable()
+export class CategoryRepository {
+  constructor(
+    @InjectRepository(CategoryEntity)
+    private readonly categoryRepository: Repository<CategoryEntity>,
+  ) {}
+  async create(category: CategoryDto) {
+    const existCategoy = await this.categoryRepository.findOne({
+      where: { name: category.name },
+    });
+
+    if (existCategoy) {
+      throw new ConflictException(
+        'A category with this name is already exists.',
+      );
+    }
+
+    return this.categoryRepository.save(category);
+  }
+  async findAll() {
+    const catigories = await this.categoryRepository.find();
+
+    return catigories;
+  }
+
+  async delete(id: string): Promise<boolean> {
+    const category = await this.categoryRepository.findOne({
+      where: { id },
+    });
+
+    if (!category) {
+      throw new NotFoundException(`Category with Id: ${id} not found`);
+    }
+
+    await this.categoryRepository.delete(category.id);
+
+    return true;
+  }
+}
