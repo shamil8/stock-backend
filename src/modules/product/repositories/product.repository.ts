@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { ProductDto } from '../dto/command/product.dto';
-import { ProductDetails } from '../dto/command/productDetails';
 import { ProductEntity } from '../entities/product.entity';
 
 @Injectable()
@@ -18,11 +17,16 @@ export class ProductRepository {
   }
 
   async findOne(id: string): Promise<ProductEntity | null> {
-    return this.productRepository.findOne({ where: { id } });
+    return this.productRepository
+      .createQueryBuilder('p')
+      .where('p.id: id', { id })
+      .getOne();
   }
 
-  async findAll(): Promise<ProductDetails[]> {
-    const products = await this.productRepository.find();
+  async findAll(): Promise<ProductEntity[]> {
+    const products = await this.productRepository
+      .createQueryBuilder('p')
+      .getMany();
 
     return products;
   }

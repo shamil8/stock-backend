@@ -29,15 +29,18 @@ export class CategoryRepository {
     return this.categoryRepository.save(category);
   }
   async findAll() {
-    const catigories = await this.categoryRepository.find();
+    const catigories = await this.categoryRepository
+      .createQueryBuilder('c')
+      .getMany();
 
     return catigories;
   }
 
   async delete(id: string): Promise<boolean> {
-    const category = await this.categoryRepository.findOne({
-      where: { id },
-    });
+    const category = await this.categoryRepository
+      .createQueryBuilder('c')
+      .where('c.id = :id', { id })
+      .getOne();
 
     if (!category) {
       throw new NotFoundException(`Category with Id: ${id} not found`);

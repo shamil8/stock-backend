@@ -17,7 +17,7 @@ export class ProductEntity extends BaseEntity {
   price!: number;
 
   @Column()
-  picture!: string;
+  picture?: string;
 
   @Column()
   count!: number;
