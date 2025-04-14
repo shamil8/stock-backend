@@ -1,7 +1,17 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
+import { UpdateProductDto } from '../../product/dto/command/updateProduct.dto';
 import { CategoryDto } from '../dto/command/categoryDto';
+import { UpdateCategoryDto } from '../dto/command/updateCategory.dto';
 import { CategoryService } from '../services/category.service';
 
 @ApiTags('Categories')
@@ -24,6 +34,14 @@ export class CategoryController {
   @Get()
   findAll() {
     return this.service.find();
+  }
+  @Put('/:id')
+  @ApiOperation({
+    summary: 'Update a category',
+    description: 'Update a category using its id',
+  })
+  update(@Param('id') id: string, @Body() categoryDto: UpdateCategoryDto) {
+    return this.service.update(id, categoryDto);
   }
 
   @ApiOperation({

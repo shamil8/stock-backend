@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { CategoryDto } from '../dto/command/categoryDto';
+import { UpdateCategoryDto } from '../dto/command/updateCategory.dto';
 import { CategoryEntity } from '../entities/category.entity';
 
 @Injectable()
@@ -36,6 +37,19 @@ export class CategoryRepository {
       .getMany();
 
     return catigories;
+  }
+
+  async update(id: string, categoryDto: UpdateCategoryDto) {
+    const product = await this.categoryRepository
+      .createQueryBuilder('c')
+      .where('c.id = :id', { id })
+      .getOne();
+
+    if (!product) {
+      throw new NotFoundException(`Product with id ${id} not found`);
+    }
+
+    return await this.categoryRepository.update(id, categoryDto);
   }
 
   async delete(id: string): Promise<boolean> {
