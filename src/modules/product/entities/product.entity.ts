@@ -16,8 +16,8 @@ export class ProductEntity extends BaseEntity {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   price!: number;
 
-  @Column()
-  picture?: string;
+  @Column({ nullable: true })
+  imgUrl?: string;
 
   @Column()
   count!: number;

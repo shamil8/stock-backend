@@ -10,10 +10,10 @@ export class CategoryDto {
   name!: string;
 
   @ApiProperty({
-    example: 'Description.',
+    example: 'This category is about transports',
     description:
       'This category is used for description of transports category.',
   })
   @IsString()
-  description!: string;
+  description?: string;
 }

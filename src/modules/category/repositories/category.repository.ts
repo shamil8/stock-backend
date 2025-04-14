@@ -15,9 +15,9 @@ export class CategoryRepository {
     @InjectRepository(CategoryEntity)
     private readonly categoryRepository: Repository<CategoryEntity>,
   ) {}
-  async create(category: CategoryDto) {
+  async create(categoryDto: CategoryDto) {
     const existCategoy = await this.categoryRepository.findOne({
-      where: { name: category.name },
+      where: { name: categoryDto.name },
     });
 
     if (existCategoy) {
@@ -25,6 +25,8 @@ export class CategoryRepository {
         'A category with this name is already exists.',
       );
     }
+
+    const category = await this.categoryRepository.create(categoryDto);
 
     return this.categoryRepository.save(category);
   }

@@ -5,28 +5,30 @@ import { CategoryDto } from '../dto/command/categoryDto';
 import { CategoryService } from '../services/category.service';
 
 @ApiTags('Categories')
-@Controller('category')
+@Controller('categories')
 export class CategoryController {
   constructor(private readonly service: CategoryService) {}
 
-  @Post('categories')
+  @Post()
   @ApiOperation({
     summary: 'Add a new category.',
+    description: 'Add a new category.',
   })
   create(@Body() category: CategoryDto): Promise<CategoryDto> {
     return this.service.create(category);
   }
 
   @ApiOperation({
-    summary: 'Find a category.',
+    summary: 'Find all categories.',
   })
-  @Get('categoties')
+  @Get()
   findAll() {
     return this.service.find();
   }
 
   @ApiOperation({
     summary: 'Delete a category.',
+    description: 'Delete a category by its id.',
   })
   @Delete('/:id')
   delete(@Param('id') id: string) {

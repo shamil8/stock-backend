@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { ProductDto } from '../dto/command/product.dto';
+import { UpdateProductDto } from '../dto/command/updateProduct.dto';
 import { ProductRepository } from '../repositories/product.repository';
 
 @Injectable()
@@ -19,7 +20,11 @@ export class ProductService {
     return await this.ProductRepository.findAll();
   }
 
-  async delete(id: number) {
+  async update(id: string, productDto: UpdateProductDto) {
+    return await this.ProductRepository.update(id, productDto);
+  }
+
+  async delete(id: string) {
     return await this.ProductRepository.delete(id);
   }
 }
