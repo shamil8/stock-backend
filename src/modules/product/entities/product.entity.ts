@@ -1,6 +1,8 @@
 import { BaseEntity } from '@app/database/entities/base.entity';
 import { CategoryEntity } from 'src/modules/category/entities/category.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+
+import { ProductHistoryEntity } from './productHistory.entity';
 
 @Entity({ schema: 'stock', name: 'products' })
 export class ProductEntity extends BaseEntity {
@@ -24,4 +26,7 @@ export class ProductEntity extends BaseEntity {
 
   @ManyToOne(() => CategoryEntity, { onDelete: 'SET NULL', nullable: true })
   category?: CategoryEntity;
+
+  @OneToMany(() => ProductHistoryEntity, (ph) => ph.product)
+  productHistories?: ProductHistoryEntity[];
 }

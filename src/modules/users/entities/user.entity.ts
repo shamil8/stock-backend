@@ -1,5 +1,5 @@
 import { BaseEntity } from '@app/database/entities/base.entity';
-import { compareSync, genSaltSync, hashSync } from 'bcrypt';
+import { pbkdf2Sync, randomBytes } from 'crypto';
 import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne } from 'typeorm';
 
 import { CountryEntity } from '../../system/entities/country.entity';
@@ -42,13 +42,26 @@ export class UserEntity extends BaseEntity {
       return;
     }
 
-    const salt = genSaltSync(10);
+    const salt = randomBytes(16).toString('hex'); // Generate a salt
+    const hash = pbkdf2Sync(this.password, salt, 10000, 64, 'sha512').toString(
+      'hex',
+    );
 
-    this.password = hashSync(this.password, salt);
+    this.password = `${salt}:${hash}`; // Store both salt and hash
   }
 
   validatePassword(password: string): boolean {
-    return compareSync(password, this.password.replace(/^\$2y/, '$2a'));
+    if (!this.password) return false;
+
+    const [salt, storedHash] = this.password.split(':');
+
+    if (!salt || !storedHash) return false;
+
+    const hash = pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString(
+      'hex',
+    );
+
+    return hash === storedHash;
   }
 
   @ManyToOne(() => CountryEntity, (country) => country.users)

@@ -13,14 +13,19 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { JwtAccessGuard } from '../../auth/guards/jwt-access.guard';
 import { RequestInterface } from '../../auth/interfaces/request.interface';
+import { HistoryDto } from '../dto/command/history.dto';
 import { ProductDto } from '../dto/command/product.dto';
 import { UpdateProductDto } from '../dto/command/updateProduct.dto';
+import { HistoryService } from '../services/history.service';
 import { ProductService } from '../services/product.service';
 
 @ApiTags('Product')
 @Controller('products')
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(
+    private readonly productService: ProductService,
+    private readonly historyService: HistoryService,
+  ) {}
   @Post()
   @ApiOperation({
     summary: 'Add a new product',
