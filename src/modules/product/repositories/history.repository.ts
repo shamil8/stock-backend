@@ -2,7 +2,6 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { UserEntity } from '../../users/entities/user.entity';
 import { HistoryDto } from '../dto/command/history.dto';
 import { ProductEntity } from '../entities/product.entity';
 import { ProductHistoryEntity } from '../entities/productHistory.entity';
@@ -11,7 +10,7 @@ import { ProductHistoryEntity } from '../entities/productHistory.entity';
 export class HistoryRepository {
   constructor(
     @InjectRepository(ProductHistoryEntity)
-    private readonly repository: Repository<ProductHistoryEntity>,
+    private readonly historyRepository: Repository<ProductHistoryEntity>,
     @InjectRepository(ProductEntity)
     private readonly productRepo: Repository<ProductEntity>,
   ) {}
@@ -37,14 +36,14 @@ export class HistoryRepository {
           ? `Added ${diff} units to the product count`
           : `Reduced ${Math.abs(diff)} units from the product count`;
 
-      const history = this.repository.create({
+      const history = this.historyRepository.create({
         diff: diff,
         description: description,
-        targetId: dto.targetid,
+        userId: dto.targetId,
         product: product,
       });
 
-      await this.repository.save(history);
+      await this.historyRepository.save(history);
 
       product.count += diff;
       await this.productRepo.save(product);
@@ -56,7 +55,7 @@ export class HistoryRepository {
   }
 
   async getAllHistory(): Promise<ProductHistoryEntity[]> {
-    return await this.repository
+    return await this.historyRepository
       .createQueryBuilder('product_histories')
       .getMany();
   }

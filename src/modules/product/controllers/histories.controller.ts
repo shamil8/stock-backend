@@ -12,8 +12,8 @@ export class HistoriesController {
   constructor(private readonly historyService: HistoryService) {}
   @Put()
   @ApiOperation({
-    summary: '...',
-    description: '...',
+    summary: 'Create history',
+    description: 'Create a new history',
   })
   @UseGuards(JwtAccessGuard)
   @ApiBearerAuth()

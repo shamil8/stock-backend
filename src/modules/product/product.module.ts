@@ -17,9 +17,12 @@ import { ProductService } from './services/product.service';
   ],
   controllers: [ProductController, HistoriesController],
   providers: [
-    ProductService,
+    // repositories
     ProductRepository,
     HistoryRepository,
+
+    // services
+    ProductService,
     HistoryService,
   ],
 })

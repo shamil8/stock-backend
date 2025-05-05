@@ -17,19 +17,39 @@ export class CategoryRepository {
     private readonly categoryRepository: Repository<CategoryEntity>,
   ) {}
   async create(categoryDto: CategoryDto) {
-    const existCategoy = await this.categoryRepository.findOne({
+    const existCategory = await this.categoryRepository.findOne({
       where: { name: categoryDto.name },
     });
 
-    if (existCategoy) {
-      throw new ConflictException(
-        'A category with this name is already exists.',
-      );
+    if (existCategory) {
+      throw new ConflictException('A category with this name already exists.');
     }
 
-    const category = await this.categoryRepository.create(categoryDto);
+    const category = new CategoryEntity();
 
-    return this.categoryRepository.save(category);
+    category.name = categoryDto.name;
+    category.description = categoryDto.description;
+
+    if (categoryDto.parentId) {
+      const parent = await this.categoryRepository.findOne({
+        where: { id: categoryDto.parentId },
+      });
+
+      if (!parent) {
+        throw new NotFoundException('Parent category not found.');
+      }
+
+      category.parent = parent;
+    }
+
+    await this.categoryRepository.save(category);
+
+    return {
+      id: category.id,
+      name: category.name,
+      description: category.description,
+      parentId: category.parent?.id ?? null,
+    };
   }
   async findAll() {
     const catigories = await this.categoryRepository

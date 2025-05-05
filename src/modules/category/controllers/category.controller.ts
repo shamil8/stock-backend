@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { UpdateProductDto } from '../../product/dto/command/updateProduct.dto';
 import { CategoryDto } from '../dto/command/categoryDto';
 import { UpdateCategoryDto } from '../dto/command/updateCategory.dto';
 import { CategoryService } from '../services/category.service';

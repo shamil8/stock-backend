@@ -10,20 +10,18 @@ export class HistoryDto {
   productid!: string;
 
   @ApiProperty({
-    example: '',
+    example: 'ZNOH4738HITA',
+    description: 'The id of the user',
   })
   @IsString()
-  userid!: string;
-
-  @IsOptional()
+  targetId!: string;
   @IsNumber()
+  @ApiProperty({
+    example: -12,
+  })
   diff!: number;
 
   @IsOptional()
   @IsString()
   description?: string;
-
-  @IsOptional()
-  @IsString()
-  targetid?: string;
 }

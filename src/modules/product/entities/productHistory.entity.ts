@@ -1,19 +1,16 @@
-import { IsOptional } from 'class-validator';
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { BaseEntity } from '@app/database/entities/base.entity';
+import { Column, Entity, ManyToOne } from 'typeorm';
 
 import { UserEntity } from '../../users/entities/user.entity';
 import { ProductEntity } from './product.entity';
 
 @Entity({ schema: 'stock', name: 'product_histories' })
-export class ProductHistoryEntity extends UserEntity {
+export class ProductHistoryEntity extends BaseEntity {
   @Column()
   diff!: number;
 
   @Column({ type: 'text', nullable: true })
   description?: string;
-
-  @Column({ nullable: true })
-  targetId?: string;
 
   @Column({ default: false })
   isConfirm!: boolean;
@@ -22,9 +19,17 @@ export class ProductHistoryEntity extends UserEntity {
   productId!: string;
 
   @ManyToOne(() => ProductEntity, (pr) => pr.productHistories)
-  @JoinColumn({ name: 'product_id' })
   product?: ProductEntity;
 
+  @Column()
+  userId!: string;
+
   @ManyToOne(() => UserEntity, (user) => user.id)
-  user?: UserEntity;
+  user!: UserEntity;
+
+  @Column({ nullable: true })
+  targetId?: string;
+
+  @ManyToOne(() => UserEntity, (user) => user.id)
+  target?: UserEntity;
 }

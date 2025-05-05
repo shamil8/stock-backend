@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class CategoryDto {
   @ApiProperty({
@@ -16,4 +16,13 @@ export class CategoryDto {
   })
   @IsString()
   description?: string;
+
+  @ApiProperty({
+    example: '1',
+    description: 'The id of parent of the category',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  parentId!: string | null;
 }
