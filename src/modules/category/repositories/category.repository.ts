@@ -31,9 +31,10 @@ export class CategoryRepository {
     category.description = categoryDto.description;
 
     if (categoryDto.parentId) {
-      const parent = await this.categoryRepository.findOne({
-        where: { id: categoryDto.parentId },
-      });
+      const parent = await this.categoryRepository
+        .createQueryBuilder('category')
+        .where('category.id = :id', { id: categoryDto.parentId })
+        .getOne();
 
       if (!parent) {
         throw new NotFoundException('Parent category not found.');
