@@ -18,4 +18,11 @@ export class UpdateCategoryDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @ApiProperty({
+    example: '',
+  })
+  @IsOptional()
+  @IsString()
+  parentId!: string | null;
 }

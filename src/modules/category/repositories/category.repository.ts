@@ -55,6 +55,7 @@ export class CategoryRepository {
   async findAll() {
     const catigories = await this.categoryRepository
       .createQueryBuilder('c')
+      .leftJoinAndSelect('c.children', 'children')
       .getMany();
 
     return catigories;
