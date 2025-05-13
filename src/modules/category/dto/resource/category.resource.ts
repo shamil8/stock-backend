@@ -1,28 +1,30 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
 
-export class CategoryDto {
+export class CategoryResource {
+  @ApiProperty({
+    required: true,
+    example: 'EKFKV2WCDJK8',
+    description: 'Category ID',
+  })
+  id!: string;
+
   @ApiProperty({
     example: 'Transport',
     description: 'This category is used for names of transports category.',
   })
-  @IsString()
   name!: string;
 
   @ApiProperty({
     example: 'This category is about transports',
     description:
       'This category is used for description of transports category.',
+    required: false,
   })
-  @IsString()
   description?: string;
 
   @ApiProperty({
-    example: '1',
-    description: 'The id of parent of the category',
+    description: 'Sub categories',
     required: false,
   })
-  @IsOptional()
-  @IsString()
-  parentId!: string | null;
+  children?: CategoryResource;
 }

@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import { ProductDto } from '../dto/command/product.dto';
-import { UpdateProductDto } from '../dto/command/updateProduct.dto';
+import { ProductCommand } from '../dto/command/product.command';
+import { UpdateProductCommand } from '../dto/command/updateProduct.command';
+import { ProductListQuery } from '../dto/query/product-list.query';
 import { ProductRepository } from '../repositories/product.repository';
 
 @Injectable()
 export class ProductService {
   constructor(private readonly ProductRepository: ProductRepository) {}
 
-  async create(data: ProductDto) {
+  async create(data: ProductCommand) {
     return await this.ProductRepository.create(data);
   }
 
@@ -16,11 +17,15 @@ export class ProductService {
     return await this.ProductRepository.findOne(id);
   }
 
-  async findAll() {
-    return await this.ProductRepository.findAll();
+  async findProductsByCategory(id: string) {
+    return await this.ProductRepository.findProductsByCategory(id);
   }
 
-  async update(id: string, productDto: UpdateProductDto) {
+  async findAll(name: ProductListQuery) {
+    return await this.ProductRepository.findAll(name);
+  }
+
+  async update(id: string, productDto: UpdateProductCommand) {
     return await this.ProductRepository.update(id, productDto);
   }
 

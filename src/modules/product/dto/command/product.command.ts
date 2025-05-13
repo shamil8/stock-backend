@@ -14,7 +14,7 @@ export class ProductDto {
     description: 'All information about the product.',
   })
   @IsString()
-  description!: string;
+  description?: string;
 
   @ApiProperty({
     example: 243,
@@ -36,12 +36,20 @@ export class ProductDto {
     description: 'The link of picture of the product.',
   })
   @IsString()
-  imgUrl!: string;
+  imgUrl?: string;
 
   @ApiProperty({
+    type: Array,
     example: 11111,
     description: 'The count of the product.',
   })
   @IsNumber()
   count!: number;
+
+  @ApiProperty({
+    example: '4O14DVIXFY2Y',
+    description: 'The id of the category.',
+  })
+  @IsString()
+  categoryId?: string;
 }
