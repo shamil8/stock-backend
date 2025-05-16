@@ -1,4 +1,4 @@
-# This file created only for Backend DEVELOPERS not for CI-CD Don't use it DevOps!!!
+# This file created ONLY FOR Backend DEVELOPERS not for CI-CD. Don't use it DevOps!!!
 version: "3.9"
 
 services:

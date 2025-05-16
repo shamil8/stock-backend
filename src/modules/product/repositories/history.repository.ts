@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { HistoryDto } from '../dto/command/history.dto';
+import { HistoryCommand } from '../dto/command/history.command';
 import { ProductEntity } from '../entities/product.entity';
 import { ProductHistoryEntity } from '../entities/productHistory.entity';
 
@@ -14,7 +14,7 @@ export class HistoryRepository {
     @InjectRepository(ProductEntity)
     private readonly productRepo: Repository<ProductEntity>,
   ) {}
-  async create(dto: HistoryDto): Promise<ProductHistoryEntity> {
+  async create(dto: HistoryCommand): Promise<ProductHistoryEntity> {
     const product = await this.productRepo
       .createQueryBuilder('p')
       .where('p.id = :id', { id: dto.productid })

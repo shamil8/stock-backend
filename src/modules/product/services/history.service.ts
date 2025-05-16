@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { HistoryDto } from '../dto/command/history.dto';
+import { HistoryCommand } from '../dto/command/history.command';
 import { HistoryRepository } from '../repositories/history.repository';
 @Injectable()
 export class HistoryService {
   constructor(private readonly repository: HistoryRepository) {}
 
-  async create(dto: HistoryDto) {
+  async create(dto: HistoryCommand) {
     return this.repository.create(dto);
   }
 

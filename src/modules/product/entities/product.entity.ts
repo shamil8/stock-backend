@@ -24,7 +24,13 @@ export class ProductEntity extends BaseEntity {
   @Column()
   count!: number;
 
-  @ManyToOne(() => CategoryEntity, { onDelete: 'SET NULL', nullable: true })
+  @Column()
+  categoryId!: string;
+
+  @ManyToOne(() => CategoryEntity, (category) => category.product, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
   category?: CategoryEntity;
 
   @OneToMany(() => ProductHistoryEntity, (ph) => ph.product)

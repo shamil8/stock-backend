@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { CategoryEntity } from '../category/entities/category.entity';
+import { CategoryRepository } from '../category/repositories/category.repository';
 import { UserEntity } from '../users/entities/user.entity';
 import { HistoriesController } from './controllers/histories.controller';
 import { ProductController } from './controllers/product.controller';
@@ -13,13 +15,19 @@ import { ProductService } from './services/product.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ProductEntity, ProductHistoryEntity, UserEntity]),
+    TypeOrmModule.forFeature([
+      ProductEntity,
+      ProductHistoryEntity,
+      UserEntity,
+      CategoryEntity,
+    ]),
   ],
   controllers: [ProductController, HistoriesController],
   providers: [
     // repositories
     ProductRepository,
     HistoryRepository,
+    CategoryRepository,
 
     // services
     ProductService,

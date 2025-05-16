@@ -3,7 +3,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { JwtAccessGuard } from '../../auth/guards/jwt-access.guard';
 import { RequestInterface } from '../../auth/interfaces/request.interface';
-import { HistoryDto } from '../dto/command/history.dto';
+import { HistoryCommand } from '../dto/command/history.command';
 import { HistoryService } from '../services/history.service';
 
 @ApiTags('Histories')
@@ -17,7 +17,7 @@ export class HistoriesController {
   })
   @UseGuards(JwtAccessGuard)
   @ApiBearerAuth()
-  history(@Request() { user }: RequestInterface, @Body() dto: HistoryDto) {
+  history(@Request() { user }: RequestInterface, @Body() dto: HistoryCommand) {
     console.log('Saloommmmmmmm', user);
 
     return this.historyService.create(dto);

@@ -6,8 +6,9 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { CategoryDto } from '../dto/command/categoryDto';
+import { CategoryCommand } from '../dto/command/category.command';
 import { UpdateCategoryDto } from '../dto/command/updateCategory.dto';
+import { CategoryResource } from '../dto/resource/category.resource';
 import { CategoryEntity } from '../entities/category.entity';
 
 @Injectable()
@@ -16,7 +17,7 @@ export class CategoryRepository {
     @InjectRepository(CategoryEntity)
     private readonly categoryRepository: Repository<CategoryEntity>,
   ) {}
-  async create(categoryDto: CategoryDto) {
+  async create(categoryDto: CategoryCommand): Promise<object> {
     const existCategory = await this.categoryRepository.findOne({
       where: { name: categoryDto.name },
     });
@@ -52,16 +53,27 @@ export class CategoryRepository {
       parentId: category.parent?.id ?? null,
     };
   }
-  async findAll() {
+
+  async findAll(): Promise<CategoryResource[]> {
     const catigories = await this.categoryRepository
       .createQueryBuilder('c')
       .leftJoinAndSelect('c.children', 'children')
+      .select([
+        'c.id',
+        'c.name',
+        'c.description',
+        'c.parentId',
+        'children.id',
+        'children.name',
+        'children.description',
+        'children.parentId',
+      ])
       .getMany();
 
     return catigories;
   }
 
-  async update(id: string, categoryDto: UpdateCategoryDto) {
+  async update(id: string, categoryDto: UpdateCategoryDto): Promise<object> {
     const product = await this.categoryRepository
       .createQueryBuilder('c')
       .where('c.id = :id', { id })
@@ -71,7 +83,7 @@ export class CategoryRepository {
       throw new NotFoundException(`Product with id ${id} not found`);
     }
 
-    return await this.categoryRepository.update(id, categoryDto);
+    return await this.categoryRepository.update(id, categoryDto as any);
   }
 
   async delete(id: string): Promise<boolean> {

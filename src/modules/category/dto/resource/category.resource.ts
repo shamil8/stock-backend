@@ -6,7 +6,7 @@ export class CategoryResource {
     example: 'EKFKV2WCDJK8',
     description: 'Category ID',
   })
-  id!: string;
+  id?: string;
 
   @ApiProperty({
     example: 'Transport',
@@ -23,8 +23,10 @@ export class CategoryResource {
   description?: string;
 
   @ApiProperty({
+    type: [CategoryResource],
+    example: ['CategoryResource'],
     description: 'Sub categories',
     required: false,
   })
-  children?: CategoryResource;
+  children?: CategoryResource[];
 }

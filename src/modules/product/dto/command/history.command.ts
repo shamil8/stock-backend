@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class HistoryDto {
+export class HistoryCommand {
   @ApiProperty({
     example: 'LDQ39UE45V4B',
     description: 'The id of the product',
