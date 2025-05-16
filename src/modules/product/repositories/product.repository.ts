@@ -67,7 +67,9 @@ export class ProductRepository {
   async findAll(query: ProductListQuery): Promise<ProductResource[]> {
     const products = await this.productRepository
       .createQueryBuilder('p')
-      .where('p.name = :name', { name: query.name })
+      .where('p.name like :name or p.description like :name', {
+        name: `%${query.name}%`,
+      })
       .getMany();
 
     console.log(query);
