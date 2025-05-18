@@ -1,7 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 
+import { ExceptionLocalCode } from '../../../enums/exception-local-code';
+import { ExceptionMessage } from '../../../enums/exception-message';
+import { AppHttpException } from '../../../filters/app-http.exception';
 import { CategoryEntity } from '../../category/entities/category.entity';
 import { CategoryRepository } from '../../category/repositories/category.repository';
 import { ProductCommand } from '../dto/command/product.command';
@@ -20,40 +23,47 @@ export class ProductRepository {
     private readonly categoryEntity: Repository<CategoryEntity>,
   ) {}
 
-  async create(productDto: ProductCommand): Promise<ProductResource> {
+  async create(command: ProductCommand): Promise<ProductResource> {
     const category = await this.categoryEntity
       .createQueryBuilder('c')
-      .where('c.id = :id', { id: productDto.categoryId })
+      .where('c.id = :id', { id: command.categoryId })
       .getOne();
 
     if (!category) {
-      throw new NotFoundException('Category not found');
+      throw new AppHttpException(
+        ExceptionMessage.CATEGORY_NOT_FOUND,
+        HttpStatus.NOT_FOUND,
+        ExceptionLocalCode.CATEGORY_NOT_FOUND,
+      );
     }
 
     const product = this.productRepository.create({
-      ...productDto,
+      ...command,
       category,
     });
 
     return await this.productRepository.save(product);
   }
 
-  async findOne(id: string): Promise<ProductResource | null> {
-    return this.productRepository
+  async findOne(id: string): Promise<ProductResource> {
+    const product = await this.productRepository
       .createQueryBuilder('p')
       .where('p.id = :id', { id })
       .getOne();
+
+    if (product) {
+      return product;
+    }
+
+    throw new AppHttpException(
+      ExceptionMessage.PRODUCT_NOT_FOUND,
+      HttpStatus.NOT_FOUND,
+      ExceptionLocalCode.NOT_FOUND,
+    );
   }
 
-  async findProductsByCategory(id: string) {
-    const category = await this.categoryEntity
-      .createQueryBuilder('c')
-      .where('c.id = :id', { id: id })
-      .getOne();
-
-    if (!category) {
-      throw new NotFoundException('Category not found');
-    }
+  async findProductsByCategory(id: string): Promise<ProductResource[]> {
+    await this.categoryRepository.findById(id);
 
     const products = await this.productRepository
       .createQueryBuilder('p')
@@ -72,30 +82,35 @@ export class ProductRepository {
       })
       .getMany();
 
-    console.log(query);
-
     return products;
   }
 
-  async update(id: string, productDto: UpdateProductCommand) {
-    const product = await this.productRepository
-      .createQueryBuilder('p')
-      .where('p.id = :id', { id })
-      .getOne();
+  async update(
+    id: string,
+    command: UpdateProductCommand,
+    queryRunner?: QueryRunner,
+  ): Promise<boolean> {
+    await this.findOne(id);
 
-    if (!product) {
-      throw new NotFoundException(`Product with id ${id} not found`);
-    }
+    await this.productRepository
+      .createQueryBuilder('p', queryRunner)
+      .useTransaction(!!queryRunner)
+      .update()
+      .set(command)
+      .where('id = :id', { id })
+      .execute();
 
-    return await this.productRepository.update(id, productDto);
+    return true;
   }
 
-  async delete(id: string) {
-    const product = await this.productRepository
-      .createQueryBuilder('p')
-      .where('p.id = :id', { id })
-      .getOneOrFail();
+  async delete(id: string, queryRunner?: QueryRunner): Promise<boolean> {
+    await this.productRepository
+      .createQueryBuilder('c', queryRunner)
+      .useTransaction(!!queryRunner)
+      .delete()
+      .where('id = :id', { id })
+      .execute();
 
-    return await this.productRepository.delete(product.id);
+    return true;
   }
 }

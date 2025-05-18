@@ -16,7 +16,6 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { DeleteResult, UpdateResult } from 'typeorm';
 
 import { ApiAppException } from '../../../dto/resource/app-exception.resource';
 import { ExceptionLocalCode } from '../../../enums/exception-local-code';
@@ -36,6 +35,10 @@ export class ProductController {
   @ApiOperation({
     summary: 'Add a new product',
     description: 'Add a new product',
+  })
+  @ApiOkResponse({
+    type: ProductResource,
+    description: 'Got new product',
   })
   @ApiAppException({
     statusCode: HttpStatus.CONFLICT,
@@ -86,6 +89,10 @@ export class ProductController {
     summary: 'Update a product',
     description: 'Update a product using its id',
   })
+  @ApiOkResponse({
+    type: Boolean,
+    description: 'Updated successfully',
+  })
   @ApiAppException({
     statusCode: HttpStatus.NOT_FOUND,
     description: ExceptionMessage.PRODUCT_NOT_FOUND,
@@ -94,7 +101,7 @@ export class ProductController {
   update(
     @Param('id') id: string,
     @Body() productDto: UpdateProductCommand,
-  ): Promise<UpdateResult> {
+  ): Promise<boolean> {
     return this.productService.update(id, productDto);
   }
 
@@ -103,9 +110,18 @@ export class ProductController {
     summary: 'Delete a product',
     description: 'Delete a product by its id',
   })
+  @ApiOkResponse({
+    type: Boolean,
+    description: 'Deleted successfully',
+  })
+  @ApiAppException({
+    statusCode: HttpStatus.NOT_FOUND,
+    description: ExceptionMessage.PRODUCT_NOT_FOUND,
+    localCode: ExceptionLocalCode.PRODUCT_NOT_FOUND,
+  })
   @UseGuards(JwtAccessGuard)
   @ApiBearerAuth()
-  delete(@Param('id') id: string): Promise<DeleteResult> {
+  delete(@Param('id') id: string): Promise<boolean> {
     return this.productService.delete(id);
   }
 }
