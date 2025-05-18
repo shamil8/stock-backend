@@ -3,14 +3,26 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { IdParamDto } from '@app/crypto-utils/dto/params/id-param.dto';
 
+import { ApiAppException } from '../../../dto/resource/app-exception.resource';
+import { ExceptionLocalCode } from '../../../enums/exception-local-code';
+import { ExceptionMessage } from '../../../enums/exception-message';
+import { JwtAccessGuard } from '../../auth/guards/jwt-access.guard';
 import { CategoryCommand } from '../dto/command/category.command';
-import { UpdateCategoryDto } from '../dto/command/updateCategory.dto';
+import { UpdateCategoryCommand } from '../dto/command/update-category.command';
 import { CategoryResource } from '../dto/resource/category.resource';
 import { CategoryService } from '../services/category.service';
 
@@ -24,8 +36,24 @@ export class CategoryController {
     summary: 'Add a new category.',
     description: 'Add a new category.',
   })
+  @ApiOkResponse({
+    type: CategoryResource,
+    description: 'Got new category',
+  })
+  @ApiAppException({
+    statusCode: HttpStatus.CONFLICT,
+    description: ExceptionMessage.CATEGORY_EXISTS,
+    localCode: ExceptionLocalCode.CATEGORY_EXISTS,
+  })
+  @ApiAppException({
+    statusCode: HttpStatus.NOT_FOUND,
+    description: ExceptionMessage.CATEGORY_NOT_FOUND,
+    localCode: ExceptionLocalCode.CATEGORY_NOT_FOUND,
+  })
+  @UseGuards(JwtAccessGuard)
+  @ApiBearerAuth()
   create(@Body() category: CategoryCommand): Promise<CategoryResource> {
-    return this.service.create(category) as any;
+    return this.service.create(category);
   }
 
   @Get()
@@ -47,19 +75,37 @@ export class CategoryController {
     summary: 'Update a category',
     description: 'Update a category using its id',
   })
+  @ApiOkResponse({
+    type: Boolean,
+    description: 'Update a category using its id',
+  })
+  @ApiAppException({
+    statusCode: HttpStatus.NOT_FOUND,
+    description: ExceptionMessage.CATEGORY_NOT_FOUND,
+    localCode: ExceptionLocalCode.CATEGORY_NOT_FOUND,
+  })
   update(
-    @Param('id') id: string,
-    @Body() categoryDto: UpdateCategoryDto,
-  ): Promise<object> {
-    return this.service.update(id, categoryDto);
+    @Param() { id }: IdParamDto,
+    @Body() command: UpdateCategoryCommand,
+  ): Promise<boolean> {
+    return this.service.update(id, command);
   }
 
+  @Delete(':id')
   @ApiOperation({
     summary: 'Delete a category.',
     description: 'Delete a category by its id.',
   })
-  @Delete('/:id')
-  delete(@Param('id') id: string): Promise<boolean> {
+  @ApiOkResponse({
+    type: Boolean,
+    description: 'Update a category using its id',
+  })
+  @ApiAppException({
+    statusCode: HttpStatus.NOT_FOUND,
+    description: ExceptionMessage.CATEGORY_NOT_FOUND,
+    localCode: ExceptionLocalCode.CATEGORY_NOT_FOUND,
+  })
+  delete(@Param() { id }: IdParamDto): Promise<boolean> {
     return this.service.delete(id);
   }
 }

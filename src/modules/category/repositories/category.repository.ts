@@ -1,13 +1,12 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 
+import { ExceptionLocalCode } from '../../../enums/exception-local-code';
+import { ExceptionMessage } from '../../../enums/exception-message';
+import { AppHttpException } from '../../../filters/app-http.exception';
 import { CategoryCommand } from '../dto/command/category.command';
-import { UpdateCategoryDto } from '../dto/command/updateCategory.dto';
+import { UpdateCategoryCommand } from '../dto/command/update-category.command';
 import { CategoryResource } from '../dto/resource/category.resource';
 import { CategoryEntity } from '../entities/category.entity';
 
@@ -17,41 +16,62 @@ export class CategoryRepository {
     @InjectRepository(CategoryEntity)
     private readonly categoryRepository: Repository<CategoryEntity>,
   ) {}
-  async create(categoryDto: CategoryCommand): Promise<object> {
-    const existCategory = await this.categoryRepository.findOne({
-      where: { name: categoryDto.name },
-    });
+  async create(command: CategoryCommand): Promise<CategoryResource> {
+    const existCategory = await this.categoryRepository
+      .createQueryBuilder('c')
+      .where('c.name = :name', { name: command.name })
+      .getOne();
 
     if (existCategory) {
-      throw new ConflictException('A category with this name already exists.');
+      throw new AppHttpException(
+        ExceptionMessage.CATEGORY_NOT_FOUND,
+        HttpStatus.NOT_FOUND,
+        ExceptionLocalCode.CATEGORY_NOT_FOUND,
+      );
     }
 
     const category = new CategoryEntity();
 
-    category.name = categoryDto.name;
-    category.description = categoryDto.description;
+    category.name = command.name;
+    category.description = command.description;
 
-    if (categoryDto.parentId) {
+    if (command.parentId) {
       const parent = await this.categoryRepository
-        .createQueryBuilder('category')
-        .where('category.id = :id', { id: categoryDto.parentId })
+        .createQueryBuilder('c')
+        .where('c.id = :id', { id: command.parentId })
         .getOne();
 
       if (!parent) {
-        throw new NotFoundException('Parent category not found.');
+        throw new AppHttpException(
+          ExceptionMessage.PARENT_ID_NOT_FOUND,
+          HttpStatus.NOT_FOUND,
+          ExceptionLocalCode.PARENT_ID_NOT_FOUND,
+        );
       }
 
       category.parent = parent;
     }
 
-    await this.categoryRepository.save(category);
+    const entity = await this.categoryRepository.save(category);
 
-    return {
-      id: category.id,
-      name: category.name,
-      description: category.description,
-      parentId: category.parent?.id ?? null,
-    };
+    return new CategoryResource(entity);
+  }
+
+  async findById(id: string): Promise<CategoryEntity> {
+    const category = await this.categoryRepository
+      .createQueryBuilder('c')
+      .where('c.id = :id', { id })
+      .getOne();
+
+    if (category) {
+      return category;
+    }
+
+    throw new AppHttpException(
+      ExceptionMessage.CATEGORY_NOT_FOUND,
+      HttpStatus.NOT_FOUND,
+      ExceptionLocalCode.CATEGORY_NOT_FOUND,
+    );
   }
 
   async findAll(): Promise<CategoryResource[]> {
@@ -73,30 +93,29 @@ export class CategoryRepository {
     return catigories;
   }
 
-  async update(id: string, categoryDto: UpdateCategoryDto): Promise<object> {
-    const product = await this.categoryRepository
-      .createQueryBuilder('c')
-      .where('c.id = :id', { id })
-      .getOne();
+  async update(
+    id: string,
+    command: UpdateCategoryCommand,
+    queryRunner?: QueryRunner,
+  ): Promise<boolean> {
+    await this.categoryRepository
+      .createQueryBuilder('c', queryRunner)
+      .useTransaction(!!queryRunner)
+      .update()
+      .set(command)
+      .where('id = :id', { id })
+      .execute();
 
-    if (!product) {
-      throw new NotFoundException(`Product with id ${id} not found`);
-    }
-
-    return await this.categoryRepository.update(id, categoryDto as any);
+    return true;
   }
 
-  async delete(id: string): Promise<boolean> {
-    const category = await this.categoryRepository
-      .createQueryBuilder('c')
-      .where('c.id = :id', { id })
-      .getOne();
-
-    if (!category) {
-      throw new NotFoundException(`Category with Id: ${id} not found`);
-    }
-
-    await this.categoryRepository.delete(category.id);
+  async delete(id: string, queryRunner?: QueryRunner): Promise<boolean> {
+    await this.categoryRepository
+      .createQueryBuilder('c', queryRunner)
+      .useTransaction(!!queryRunner)
+      .delete()
+      .where('id = :id', { id })
+      .execute();
 
     return true;
   }

@@ -1,27 +1,31 @@
 import { Injectable } from '@nestjs/common';
 
 import { CategoryCommand } from '../dto/command/category.command';
-import { UpdateCategoryDto } from '../dto/command/updateCategory.dto';
+import { UpdateCategoryCommand } from '../dto/command/update-category.command';
 import { CategoryResource } from '../dto/resource/category.resource';
 import { CategoryRepository } from '../repositories/category.repository';
 
 @Injectable()
 export class CategoryService {
-  constructor(private readonly Repository: CategoryRepository) {}
+  constructor(private readonly repository: CategoryRepository) {}
 
-  async create(name: CategoryCommand) {
-    return this.Repository.create(name);
+  async create(command: CategoryCommand): Promise<CategoryResource> {
+    return this.repository.create(command);
   }
 
   async find(): Promise<CategoryResource[]> {
-    return this.Repository.findAll();
+    return this.repository.findAll();
   }
 
-  async update(id: string, categoryDto: UpdateCategoryDto) {
-    return await this.Repository.update(id, categoryDto);
+  async update(id: string, command: UpdateCategoryCommand): Promise<boolean> {
+    const category = await this.repository.findById(id);
+
+    return await this.repository.update(category.id, command);
   }
 
   async delete(id: string): Promise<boolean> {
-    return this.Repository.delete(id);
+    const category = await this.repository.findById(id);
+
+    return this.repository.delete(category.id);
   }
 }

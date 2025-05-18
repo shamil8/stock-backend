@@ -24,5 +24,5 @@ export class CategoryCommand {
   })
   @IsOptional()
   @IsUUID()
-  parentId!: string | null;
+  parentId?: string;
 }

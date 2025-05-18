@@ -3,24 +3,25 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
   Post,
   Put,
   Query,
-  Request,
   UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
-  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { DeleteResult, UpdateResult } from 'typeorm';
 
+import { ApiAppException } from '../../../dto/resource/app-exception.resource';
+import { ExceptionLocalCode } from '../../../enums/exception-local-code';
+import { ExceptionMessage } from '../../../enums/exception-message';
 import { JwtAccessGuard } from '../../auth/guards/jwt-access.guard';
-import { RequestInterface } from '../../auth/interfaces/request.interface';
 import { ProductCommand } from '../dto/command/product.command';
 import { UpdateProductCommand } from '../dto/command/updateProduct.command';
 import { ProductListQuery } from '../dto/query/product-list.query';
@@ -35,6 +36,11 @@ export class ProductController {
   @ApiOperation({
     summary: 'Add a new product',
     description: 'Add a new product',
+  })
+  @ApiAppException({
+    statusCode: HttpStatus.CONFLICT,
+    description: ExceptionMessage.CATEGORY_EXISTS,
+    localCode: ExceptionLocalCode.CATEGORY_EXISTS,
   })
   create(@Body() createProductDto: ProductCommand): Promise<ProductResource> {
     return this.productService.create(createProductDto);
@@ -62,7 +68,6 @@ export class ProductController {
     type: ProductResource,
     description: 'Got a list of all products by their name.',
   })
-  @ApiResponse({})
   getAll(@Query() name: ProductListQuery): Promise<ProductResource[]> {
     return this.productService.findAll(name);
   }
@@ -81,6 +86,11 @@ export class ProductController {
     summary: 'Update a product',
     description: 'Update a product using its id',
   })
+  @ApiAppException({
+    statusCode: HttpStatus.NOT_FOUND,
+    description: ExceptionMessage.PRODUCT_NOT_FOUND,
+    localCode: ExceptionLocalCode.PRODUCT_NOT_FOUND,
+  })
   update(
     @Param('id') id: string,
     @Body() productDto: UpdateProductCommand,
@@ -95,12 +105,7 @@ export class ProductController {
   })
   @UseGuards(JwtAccessGuard)
   @ApiBearerAuth()
-  delete(
-    @Request() { user }: RequestInterface,
-    @Param('id') id: string,
-  ): Promise<DeleteResult> {
-    console.log('Saloommmmmmm', user);
-
+  delete(@Param('id') id: string): Promise<DeleteResult> {
     return this.productService.delete(id);
   }
 }

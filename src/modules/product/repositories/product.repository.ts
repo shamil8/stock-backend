@@ -30,7 +30,7 @@ export class ProductRepository {
       throw new NotFoundException('Category not found');
     }
 
-    const product = await this.productRepository.create({
+    const product = this.productRepository.create({
       ...productDto,
       category,
     });

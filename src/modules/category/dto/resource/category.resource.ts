@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+import { CategoryEntity } from '../../entities/category.entity';
+
 export class CategoryResource {
   @ApiProperty({
     required: true,
@@ -29,4 +31,16 @@ export class CategoryResource {
     required: false,
   })
   children?: CategoryResource[];
+
+  constructor(entity: CategoryEntity) {
+    this.id = entity.id;
+    this.name = entity.name;
+    this.description = entity.description;
+
+    if (entity.children) {
+      this.children = entity.children.map(
+        (child) => new CategoryResource(child),
+      );
+    }
+  }
 }
