@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { IdParamDto } from '@app/crypto-utils/dto/params/id-param.dto';
 
 import { ProductCommand } from '../dto/command/product.command';
-import { UpdateProductCommand } from '../dto/command/updateProduct.command';
+import { UpdateProductCommand } from '../dto/command/update-product.command';
 import { ProductListQuery } from '../dto/query/product-list.query';
 import { ProductResource } from '../dto/resources/product.resource';
 import { ProductRepository } from '../repositories/product.repository';

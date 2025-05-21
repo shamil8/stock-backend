@@ -23,7 +23,7 @@ import { ExceptionLocalCode } from '../../../enums/exception-local-code';
 import { ExceptionMessage } from '../../../enums/exception-message';
 import { JwtAccessGuard } from '../../auth/guards/jwt-access.guard';
 import { ProductCommand } from '../dto/command/product.command';
-import { UpdateProductCommand } from '../dto/command/updateProduct.command';
+import { UpdateProductCommand } from '../dto/command/update-product.command';
 import { ProductListQuery } from '../dto/query/product-list.query';
 import { ProductResource } from '../dto/resources/product.resource';
 import { ProductService } from '../services/product.service';
