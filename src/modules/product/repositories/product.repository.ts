@@ -1,5 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { IdParamDto } from '@app/crypto-utils/dto/params/id-param.dto';
 import { QueryRunner, Repository } from 'typeorm';
 
 import { ExceptionLocalCode } from '../../../enums/exception-local-code';

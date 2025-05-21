@@ -1,5 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { IdParamDto } from '@app/crypto-utils/dto/params/id-param.dto';
 import { QueryRunner, Repository } from 'typeorm';
 
 import { ExceptionLocalCode } from '../../../enums/exception-local-code';
@@ -94,7 +95,7 @@ export class CategoryRepository {
   }
 
   async update(
-    id: string,
+    id: IdParamDto,
     command: UpdateCategoryCommand,
     queryRunner?: QueryRunner,
   ): Promise<boolean> {
@@ -109,7 +110,7 @@ export class CategoryRepository {
     return true;
   }
 
-  async delete(id: string, queryRunner?: QueryRunner): Promise<boolean> {
+  async delete(id: IdParamDto, queryRunner?: QueryRunner): Promise<boolean> {
     await this.categoryRepository
       .createQueryBuilder('c', queryRunner)
       .useTransaction(!!queryRunner)

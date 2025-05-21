@@ -8,7 +8,7 @@ export class CategoryResource {
     example: 'EKFKV2WCDJK8',
     description: 'Category ID',
   })
-  id?: string;
+  id!: string;
 
   @ApiProperty({
     example: 'Transport',

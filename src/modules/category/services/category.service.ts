@@ -20,12 +20,12 @@ export class CategoryService {
   async update(id: string, command: UpdateCategoryCommand): Promise<boolean> {
     const category = await this.repository.findById(id);
 
-    return await this.repository.update(category.id, command);
+    return await this.repository.update(category, command);
   }
 
   async delete(id: string): Promise<boolean> {
     const category = await this.repository.findById(id);
 
-    return this.repository.delete(category.id);
+    return this.repository.delete(category);
   }
 }

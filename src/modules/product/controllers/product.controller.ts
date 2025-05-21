@@ -16,6 +16,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { IdParamDto } from '@app/crypto-utils/dto/params/id-param.dto';
 
 import { ApiAppException } from '../../../dto/resource/app-exception.resource';
 import { ExceptionLocalCode } from '../../../enums/exception-local-code';
@@ -58,7 +59,9 @@ export class ProductController {
     type: ProductResource,
     description: 'Got a list of products by their category',
   })
-  findProductsByCategory(@Param('id') id: string): Promise<ProductResource[]> {
+  findProductsByCategory(
+    @Param() { id }: IdParamDto,
+  ): Promise<ProductResource[]> {
     return this.productService.findProductsByCategory(id);
   }
 
@@ -80,7 +83,7 @@ export class ProductController {
     summary: 'Get a product',
     description: 'Get a product by its id',
   })
-  findOne(@Param('id') id: string): Promise<ProductResource | null> {
+  findOne(@Param() { id }: IdParamDto): Promise<ProductResource | null> {
     return this.productService.findOne(id);
   }
 
@@ -99,7 +102,7 @@ export class ProductController {
     localCode: ExceptionLocalCode.PRODUCT_NOT_FOUND,
   })
   update(
-    @Param('id') id: string,
+    @Param() { id }: IdParamDto,
     @Body() productDto: UpdateProductCommand,
   ): Promise<boolean> {
     return this.productService.update(id, productDto);
@@ -121,7 +124,7 @@ export class ProductController {
   })
   @UseGuards(JwtAccessGuard)
   @ApiBearerAuth()
-  delete(@Param('id') id: string): Promise<boolean> {
+  delete(@Param() { id }: IdParamDto): Promise<boolean> {
     return this.productService.delete(id);
   }
 }
