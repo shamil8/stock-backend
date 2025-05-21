@@ -32,4 +32,7 @@ export enum ExceptionMessage {
   //product
   PRODUCT_NOT_FOUND = 'Product not found',
   PRODUCT_EXISTS = 'Product already exists',
+
+  //history
+  INSUFFICIENT_COUNT = 'Insufficient product count',
 }

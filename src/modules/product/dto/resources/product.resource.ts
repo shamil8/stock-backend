@@ -10,12 +10,14 @@ export class ProductResource {
   @ApiProperty({
     example: 'Smart phone Iphone 6 pro max 256gb l/la.',
     description: 'All information about the product.',
+    required: false,
   })
   description?: string;
 
   @ApiProperty({
     example: 243,
     description: 'The weight of the product (in term of gramm).',
+    required: false,
   })
   weight?: number;
 
@@ -29,6 +31,7 @@ export class ProductResource {
     example:
       'https://www.google.com/search?sca_esv=fb8ace8cedc707a8&sxsrf=AHTn8zpOpaa323x21DNL-sx9KsdLUzzUEA:1743962938441&q=iphone+16+pro+max&udm=2&fbs=ABzOT_ALXLK7nhX51dCJFXZvftNljihIFR0bjYjZ2Ob11NWoDhmNR4s1JD1HRY6KzbHoVs50toPKAkqsSC60PyK493kqWy9BDH4BVurbV37fJZlncDuIrJD0HS4BNM2KW7ecBniI5nInxgR2rJGzm1qniQgkQylJitJyi9NrcrJ9ibJD_XXkCBFGPze9w8xCwT3e-uvusmXSonxkeOPpRKUaxw5nPhOuELS2nNQ-EO8Ud4tlkzryKcM&sa=X&ved=2ahUKEwjk2cmbgMSMAxXlU1UIHWtDPTIQtKgLegQIEhAB&biw=1470&bih=920&dpr=2#vhid=cI5KZ-xUN-rgVM&vssid=mosaic',
     description: 'The link of picture of the product.',
+    required: false,
   })
   imgUrl?: string;
 
@@ -42,6 +45,7 @@ export class ProductResource {
   @ApiProperty({
     example: '4O14DVIXFY2Y',
     description: 'The id of the category.',
+    required: false,
   })
   categoryId?: string;
 }

@@ -1,6 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IdParamDto } from '@app/crypto-utils/dto/params/id-param.dto';
 import { QueryRunner, Repository } from 'typeorm';
 
 import { ExceptionLocalCode } from '../../../enums/exception-local-code';
@@ -9,7 +8,7 @@ import { AppHttpException } from '../../../filters/app-http.exception';
 import { CategoryEntity } from '../../category/entities/category.entity';
 import { CategoryRepository } from '../../category/repositories/category.repository';
 import { ProductCommand } from '../dto/command/product.command';
-import { UpdateProductCommand } from '../dto/command/updateProduct.command';
+import { UpdateProductCommand } from '../dto/command/update-product.command';
 import { ProductListQuery } from '../dto/query/product-list.query';
 import { ProductResource } from '../dto/resources/product.resource';
 import { ProductEntity } from '../entities/product.entity';

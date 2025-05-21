@@ -1,7 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { ExceptionLocalCode } from '../../../enums/exception-local-code';
+import { ExceptionMessage } from '../../../enums/exception-message';
+import { AppHttpException } from '../../../filters/app-http.exception';
 import { HistoryCommand } from '../dto/command/history.command';
 import { ProductEntity } from '../entities/product.entity';
 import { ProductHistoryEntity } from '../entities/productHistory.entity';
@@ -28,7 +31,11 @@ export class HistoryRepository {
 
     if (diff !== 0) {
       if (product.count + diff < 0) {
-        throw new BadRequestException('Insufficient product count');
+        throw new AppHttpException(
+          ExceptionMessage.INSUFFICIENT_COUNT,
+          HttpStatus.BAD_REQUEST,
+          ExceptionLocalCode.INSUFFICIENT_COUNT,
+        );
       }
 
       const description =
