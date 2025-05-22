@@ -7,7 +7,7 @@ export class HistoryCommand {
     description: 'The id of the product',
   })
   @IsString()
-  productid!: string;
+  productId!: string;
 
   @ApiProperty({
     example: 'ZNOH4738HITA',
@@ -18,6 +18,8 @@ export class HistoryCommand {
   @IsNumber()
   @ApiProperty({
     example: -12,
+    description: 'the amount of change that occurs',
+    required: false,
   })
   diff!: number;
 

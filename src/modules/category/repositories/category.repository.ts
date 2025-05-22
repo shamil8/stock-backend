@@ -25,9 +25,9 @@ export class CategoryRepository {
 
     if (existCategory) {
       throw new AppHttpException(
-        ExceptionMessage.CATEGORY_NOT_FOUND,
-        HttpStatus.NOT_FOUND,
-        ExceptionLocalCode.CATEGORY_NOT_FOUND,
+        ExceptionMessage.CATEGORY_EXISTS,
+        HttpStatus.CONFLICT,
+        ExceptionLocalCode.CATEGORY_EXISTS,
       );
     }
 

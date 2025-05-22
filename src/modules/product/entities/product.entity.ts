@@ -31,7 +31,7 @@ export class ProductEntity extends BaseEntity {
     onDelete: 'SET NULL',
     nullable: true,
   })
-  category?: CategoryEntity;
+  category!: CategoryEntity;
 
   @OneToMany(() => ProductHistoryEntity, (ph) => ph.product)
   productHistories?: ProductHistoryEntity[];

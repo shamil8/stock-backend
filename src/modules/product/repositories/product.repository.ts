@@ -5,7 +5,6 @@ import { QueryRunner, Repository } from 'typeorm';
 import { ExceptionLocalCode } from '../../../enums/exception-local-code';
 import { ExceptionMessage } from '../../../enums/exception-message';
 import { AppHttpException } from '../../../filters/app-http.exception';
-import { CategoryEntity } from '../../category/entities/category.entity';
 import { CategoryRepository } from '../../category/repositories/category.repository';
 import { ProductCommand } from '../dto/command/product.command';
 import { UpdateProductCommand } from '../dto/command/update-product.command';
@@ -19,15 +18,10 @@ export class ProductRepository {
     @InjectRepository(ProductEntity)
     private readonly productRepository: Repository<ProductEntity>,
     private readonly categoryRepository: CategoryRepository,
-    @InjectRepository(CategoryEntity)
-    private readonly categoryEntity: Repository<CategoryEntity>,
   ) {}
 
   async create(command: ProductCommand): Promise<ProductResource> {
-    const category = await this.categoryEntity
-      .createQueryBuilder('c')
-      .where('c.id = :id', { id: command.categoryId })
-      .getOne();
+    const category = await this.categoryRepository.findById(command.categoryId);
 
     if (!category) {
       throw new AppHttpException(

@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { IdParamDto } from '@app/crypto-utils/dto/params/id-param.dto';
 
 import { ProductCommand } from '../dto/command/product.command';
 import { UpdateProductCommand } from '../dto/command/update-product.command';

@@ -13,7 +13,9 @@ export class CategoryCommand {
     example: 'This category is about transports',
     description:
       'This category is used for description of transports category.',
+    required: false,
   })
+  @IsOptional()
   @IsString()
   description?: string;
 

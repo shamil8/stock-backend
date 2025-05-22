@@ -70,4 +70,5 @@ export enum ExceptionLocalCode {
 
   // product_history
   INSUFFICIENT_COUNT = 13000,
+  INVALID_DIFF_VALUE = 13001,
 }

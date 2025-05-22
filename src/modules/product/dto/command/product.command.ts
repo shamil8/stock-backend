@@ -42,7 +42,6 @@ export class ProductCommand {
   imgUrl?: string;
 
   @ApiProperty({
-    type: Array,
     example: 11111,
     description: 'The count of the product.',
   })
@@ -55,5 +54,5 @@ export class ProductCommand {
     required: false,
   })
   @IsString()
-  categoryId?: string;
+  categoryId!: string;
 }

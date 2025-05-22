@@ -34,5 +34,6 @@ export enum ExceptionMessage {
   PRODUCT_EXISTS = 'Product already exists',
 
   //history
+  INVALID_DIFF_VALUE = 'Invalid DIFF value',
   INSUFFICIENT_COUNT = 'Insufficient product count',
 }

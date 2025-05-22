@@ -36,7 +36,6 @@ export class ProductResource {
   imgUrl?: string;
 
   @ApiProperty({
-    type: Array,
     example: 11111,
     description: 'The count of the product.',
   })

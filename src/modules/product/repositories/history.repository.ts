@@ -1,4 +1,4 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -6,6 +6,7 @@ import { ExceptionLocalCode } from '../../../enums/exception-local-code';
 import { ExceptionMessage } from '../../../enums/exception-message';
 import { AppHttpException } from '../../../filters/app-http.exception';
 import { HistoryCommand } from '../dto/command/history.command';
+import { HistoryResource } from '../dto/resources/history-resource';
 import { ProductEntity } from '../entities/product.entity';
 import { ProductHistoryEntity } from '../entities/productHistory.entity';
 
@@ -17,14 +18,18 @@ export class HistoryRepository {
     @InjectRepository(ProductEntity)
     private readonly productRepo: Repository<ProductEntity>,
   ) {}
-  async create(dto: HistoryCommand): Promise<ProductHistoryEntity> {
+  async create(dto: HistoryCommand): Promise<HistoryResource> {
     const product = await this.productRepo
       .createQueryBuilder('p')
-      .where('p.id = :id', { id: dto.productid })
+      .where('p.id = :id', { id: dto.productId })
       .getOne();
 
     if (!product) {
-      throw new Error('Product not found');
+      throw new AppHttpException(
+        ExceptionMessage.PRODUCT_NOT_FOUND,
+        HttpStatus.NOT_FOUND,
+        ExceptionLocalCode.PRODUCT_NOT_FOUND,
+      );
     }
 
     const diff = dto.diff;
@@ -57,7 +62,11 @@ export class HistoryRepository {
 
       return history;
     } else {
-      throw new BadRequestException('Invalid diff value');
+      throw new AppHttpException(
+        ExceptionMessage.INVALID_DIFF_VALUE,
+        HttpStatus.BAD_REQUEST,
+        ExceptionLocalCode.INVALID_DIFF_VALUE,
+      );
     }
   }
 
