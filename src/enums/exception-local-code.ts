@@ -68,7 +68,7 @@ export enum ExceptionLocalCode {
   PRODUCT_NOT_FOUND = 12900,
   PRODUCT_EXISTS,
 
-  // product_history
+  // product history
   INSUFFICIENT_COUNT = 13000,
-  INVALID_DIFF_VALUE = 13001,
+  PRODUCT_HISTORY_NOT_CREATED,
 }

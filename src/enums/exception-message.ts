@@ -24,16 +24,16 @@ export enum ExceptionMessage {
   COUNTRY_NOT_FOUND = 'Country not found',
   COUNTRY_NOT_AVAILABLE = 'Country not available for registration',
 
-  //category
+  // category
   CATEGORY_NOT_FOUND = 'Category not found',
   CATEGORY_EXISTS = 'Category already exists',
   PARENT_ID_NOT_FOUND = 'Parent id not found',
 
-  //product
+  // product
   PRODUCT_NOT_FOUND = 'Product not found',
   PRODUCT_EXISTS = 'Product already exists',
 
-  //history
-  INVALID_DIFF_VALUE = 'Invalid DIFF value',
+  // product history
+  PRODUCT_HISTORY_NOT_CREATED = 'Product history not created',
   INSUFFICIENT_COUNT = 'Insufficient product count',
 }

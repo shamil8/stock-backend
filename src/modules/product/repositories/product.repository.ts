@@ -21,25 +21,16 @@ export class ProductRepository {
   ) {}
 
   async create(command: ProductCommand): Promise<ProductResource> {
-    const category = await this.categoryRepository.findById(command.categoryId);
+    const category = await this.categoryRepository.findByIdOrFail(
+      command.categoryId,
+    );
 
-    if (!category) {
-      throw new AppHttpException(
-        ExceptionMessage.CATEGORY_NOT_FOUND,
-        HttpStatus.NOT_FOUND,
-        ExceptionLocalCode.CATEGORY_NOT_FOUND,
-      );
-    }
-
-    const product = this.productRepository.create({
-      ...command,
-      category,
-    });
+    const product = this.productRepository.create({ ...command, category });
 
     return await this.productRepository.save(product);
   }
 
-  async findOne(id: string): Promise<ProductResource> {
+  async findOne(id: string): Promise<ProductEntity> {
     const product = await this.productRepository
       .createQueryBuilder('p')
       .where('p.id = :id', { id })
@@ -57,7 +48,7 @@ export class ProductRepository {
   }
 
   async findProductsByCategory(id: string): Promise<ProductResource[]> {
-    await this.categoryRepository.findById(id);
+    await this.categoryRepository.findByIdOrFail(id);
 
     const products = await this.productRepository
       .createQueryBuilder('p')
@@ -71,9 +62,7 @@ export class ProductRepository {
   async findAll(query: ProductListQuery): Promise<ProductResource[]> {
     const products = await this.productRepository
       .createQueryBuilder('p')
-      .where('p.name like :name or p.description like :name', {
-        name: `%${query.name}%`,
-      })
+      .AndSearch(['p.name', 'p.description'], query.name)
       .getMany();
 
     return products;

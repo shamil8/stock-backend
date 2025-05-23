@@ -2,6 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class ProductResource {
   @ApiProperty({
+    required: true,
+    example: 'EKFKV2WCDJK8',
+    description: 'Product ID',
+  })
+  id!: string;
+
+  @ApiProperty({
     example: 'Iphone 6 pro max',
     description: 'Name of the product.',
   })

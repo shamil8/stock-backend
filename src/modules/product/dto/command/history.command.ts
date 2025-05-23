@@ -9,12 +9,6 @@ export class HistoryCommand {
   @IsString()
   productId!: string;
 
-  @ApiProperty({
-    example: 'ZNOH4738HITA',
-    description: 'The id of the user',
-  })
-  @IsString()
-  targetId!: string;
   @IsNumber()
   @ApiProperty({
     example: -12,
@@ -23,6 +17,11 @@ export class HistoryCommand {
   })
   diff!: number;
 
+  @ApiProperty({
+    example: 'History description',
+    description: 'Description for history count.',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   description?: string;

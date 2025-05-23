@@ -8,29 +8,29 @@ import { ProductRepository } from '../repositories/product.repository';
 
 @Injectable()
 export class ProductService {
-  constructor(private readonly ProductRepository: ProductRepository) {}
+  constructor(private readonly productRepository: ProductRepository) {}
 
   async create(data: ProductCommand): Promise<ProductResource> {
-    return await this.ProductRepository.create(data);
+    return await this.productRepository.create(data);
   }
 
   async findOne(id: string): Promise<ProductResource> {
-    return await this.ProductRepository.findOne(id);
+    return await this.productRepository.findOne(id);
   }
 
   async findProductsByCategory(id: string): Promise<ProductResource[]> {
-    return await this.ProductRepository.findProductsByCategory(id);
+    return await this.productRepository.findProductsByCategory(id);
   }
 
-  async findAll(name: ProductListQuery): Promise<ProductResource[]> {
-    return await this.ProductRepository.findAll(name);
+  async findAll(query: ProductListQuery): Promise<ProductResource[]> {
+    return await this.productRepository.findAll(query);
   }
 
   async update(id: string, productDto: UpdateProductCommand): Promise<boolean> {
-    return await this.ProductRepository.update(id, productDto);
+    return await this.productRepository.update(id, productDto);
   }
 
   async delete(id: string): Promise<boolean> {
-    return await this.ProductRepository.delete(id);
+    return await this.productRepository.delete(id);
   }
 }

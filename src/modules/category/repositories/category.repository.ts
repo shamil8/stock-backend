@@ -18,29 +18,13 @@ export class CategoryRepository {
     private readonly categoryRepository: Repository<CategoryEntity>,
   ) {}
   async create(command: CategoryCommand): Promise<CategoryResource> {
-    const existCategory = await this.categoryRepository
-      .createQueryBuilder('c')
-      .where('c.name = :name', { name: command.name })
-      .getOne();
-
-    if (existCategory) {
-      throw new AppHttpException(
-        ExceptionMessage.CATEGORY_EXISTS,
-        HttpStatus.CONFLICT,
-        ExceptionLocalCode.CATEGORY_EXISTS,
-      );
-    }
-
     const category = new CategoryEntity();
 
     category.name = command.name;
     category.description = command.description;
 
     if (command.parentId) {
-      const parent = await this.categoryRepository
-        .createQueryBuilder('c')
-        .where('c.id = :id', { id: command.parentId })
-        .getOne();
+      const parent = await this.findById(command.parentId);
 
       if (!parent) {
         throw new AppHttpException(
@@ -58,11 +42,15 @@ export class CategoryRepository {
     return new CategoryResource(entity);
   }
 
-  async findById(id: string): Promise<CategoryEntity> {
-    const category = await this.categoryRepository
+  async findById(id: string): Promise<CategoryEntity | null> {
+    return await this.categoryRepository
       .createQueryBuilder('c')
       .where('c.id = :id', { id })
       .getOne();
+  }
+
+  async findByIdOrFail(id: string): Promise<CategoryEntity> {
+    const category = await this.findById(id);
 
     if (category) {
       return category;
@@ -73,6 +61,13 @@ export class CategoryRepository {
       HttpStatus.NOT_FOUND,
       ExceptionLocalCode.CATEGORY_NOT_FOUND,
     );
+  }
+
+  async findByName(name: string): Promise<CategoryEntity | null> {
+    return await this.categoryRepository
+      .createQueryBuilder('c')
+      .where('c.name = :name', { name })
+      .getOne();
   }
 
   async findAll(): Promise<CategoryResource[]> {

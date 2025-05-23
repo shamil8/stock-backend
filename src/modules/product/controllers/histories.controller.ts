@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Put, Request, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -7,6 +7,7 @@ import {
 } from '@nestjs/swagger';
 
 import { JwtAccessGuard } from '../../auth/guards/jwt-access.guard';
+import { RequestInterface } from '../../auth/interfaces/request.interface';
 import { HistoryCommand } from '../dto/command/history.command';
 import { HistoryResource } from '../dto/resources/history-resource';
 import { HistoryService } from '../services/history.service';
@@ -15,6 +16,7 @@ import { HistoryService } from '../services/history.service';
 @Controller('histories')
 export class HistoriesController {
   constructor(private readonly historyService: HistoryService) {}
+
   @Put()
   @ApiOperation({
     summary: 'Create history',
@@ -26,8 +28,11 @@ export class HistoriesController {
   })
   @UseGuards(JwtAccessGuard)
   @ApiBearerAuth()
-  history(@Body() dto: HistoryCommand): Promise<HistoryResource> {
-    return this.historyService.create(dto);
+  history(
+    @Request() { user }: RequestInterface,
+    @Body() dto: HistoryCommand,
+  ): Promise<HistoryResource> {
+    return this.historyService.createHistory(user.id, dto);
   }
 
   @Get()

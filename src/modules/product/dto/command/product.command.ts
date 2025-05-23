@@ -12,6 +12,7 @@ export class ProductCommand {
   @ApiProperty({
     example: 'Smart phone Iphone 6 pro max 256gb l/la.',
     description: 'All information about the product.',
+    required: false,
   })
   @IsString()
   description?: string;

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LoggerModule } from '@app/logger/logger.module';
 
 import { CategoryEntity } from '../category/entities/category.entity';
 import { CategoryRepository } from '../category/repositories/category.repository';
@@ -15,6 +16,7 @@ import { ProductService } from './services/product.service';
 
 @Module({
   imports: [
+    LoggerModule,
     TypeOrmModule.forFeature([
       ProductEntity,
       ProductHistoryEntity,

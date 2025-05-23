@@ -74,8 +74,8 @@ export class ProductController {
     type: ProductResource,
     description: 'Got a list of all products by their name.',
   })
-  getAll(@Query() name: ProductListQuery): Promise<ProductResource[]> {
-    return this.productService.findAll(name);
+  getAll(@Query() query: ProductListQuery): Promise<ProductResource[]> {
+    return this.productService.findAll(query);
   }
 
   @Get('/:id')
