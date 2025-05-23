@@ -1,12 +1,12 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 
+import { ExceptionLocalCode } from '../../../enums/exception-local-code';
+import { ExceptionMessage } from '../../../enums/exception-message';
+import { AppHttpException } from '../../../filters/app-http.exception';
 import { CategoryCommand } from '../dto/command/category.command';
 import { UpdateCategoryCommand } from '../dto/command/update-category.command';
 import { CategoryResource } from '../dto/resource/category.resource';
 import { CategoryRepository } from '../repositories/category.repository';
-import { AppHttpException } from '../../../filters/app-http.exception';
-import { ExceptionMessage } from '../../../enums/exception-message';
-import { ExceptionLocalCode } from '../../../enums/exception-local-code';
 
 @Injectable()
 export class CategoryService {
@@ -31,14 +31,12 @@ export class CategoryService {
   }
 
   async update(id: string, command: UpdateCategoryCommand): Promise<boolean> {
-    const category = await this.repository.findByIdOrFail(id);
-
-    return await this.repository.update(category, command);
+    return await this.repository.update(id, command);
   }
 
   async delete(id: string): Promise<boolean> {
-    const category = await this.repository.findByIdOrFail(id);
+    await this.repository.findByIdOrFail(id);
 
-    return this.repository.delete(category);
+    return this.repository.delete(id);
   }
 }
