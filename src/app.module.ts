@@ -6,6 +6,8 @@ import { RabbitModule } from '@app/rabbit/rabbit.module';
 
 import { rateLimitOptions } from './constants/rate-limit';
 import { AuthModule } from './modules/auth/auth.module';
+import { CategoryModule } from './modules/category/category.module';
+import { ProductModule } from './modules/product/product.module';
 import { SystemModule } from './modules/system/system.module';
 import { UserModule } from './modules/users/user.module';
 
@@ -27,6 +29,8 @@ import { UserModule } from './modules/users/user.module';
     SystemModule,
     AuthModule,
     UserModule,
+    CategoryModule,
+    ProductModule,
   ],
 })
 export class AppModule {}

@@ -26,7 +26,7 @@ export class CountryResource {
   @ApiProperty({
     required: false,
     example: '🇦🇹',
-    description: 'The emoji flag symbol of the country, if available.',
+    description: 'The emoji flag symbol of the country (if available).',
   })
   sign?: string;
 

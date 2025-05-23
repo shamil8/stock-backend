@@ -58,4 +58,17 @@ export enum ExceptionLocalCode {
 
   // system module
   COUNTRY_NOT_FOUND = 12700,
+
+  // category module
+  CATEGORY_NOT_FOUND = 12800,
+  CATEGORY_EXISTS,
+  PARENT_ID_NOT_FOUND,
+
+  // product
+  PRODUCT_NOT_FOUND = 12900,
+  PRODUCT_EXISTS,
+
+  // product history
+  INSUFFICIENT_COUNT = 13000,
+  PRODUCT_HISTORY_NOT_CREATED,
 }
