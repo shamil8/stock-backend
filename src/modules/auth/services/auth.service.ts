@@ -39,6 +39,7 @@ export class AuthService {
   async login(command: AuthCommand): Promise<JwtResponseResource> {
     const user = await this.userService.findByEmail(command.email, [
       'id',
+      'firstName',
       'password',
       'role',
     ]);
@@ -51,7 +52,12 @@ export class AuthService {
       );
     }
 
-    return this.createTokens({ id: user.id, role: user.role });
+    return this.createTokens({
+      id: user.id,
+      email: command.email,
+      name: user.firstName,
+      role: user.role,
+    });
   }
 
   async refreshToken(refresh: string): Promise<JwtResponseResource> {

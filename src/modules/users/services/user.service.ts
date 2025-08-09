@@ -5,6 +5,7 @@ import { LoggerService } from '@app/logger/services/logger.service';
 import { ExceptionLocalCode } from '../../../enums/exception-local-code';
 import { ExceptionMessage } from '../../../enums/exception-message';
 import { AppHttpException } from '../../../filters/app-http.exception';
+import { ChangeUserPasswordCommand } from '../dto/command/change-user-password.command';
 import { StoreUserCommand } from '../dto/command/store-user.command';
 import { UserListQuery } from '../dto/query/user-list.query';
 import { UserResource } from '../dto/resource/user.resource';
@@ -74,5 +75,12 @@ export class UserService {
     const user = await this.userRepository.storeUser(command);
 
     return new UserResource(user);
+  }
+
+  changePassword(
+    userId: string,
+    command: ChangeUserPasswordCommand,
+  ): Promise<boolean> {
+    return this.userRepository.changePassword(userId, command);
   }
 }

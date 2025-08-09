@@ -1,0 +1,5 @@
+export enum ClientTypeEnum {
+  RENTAIL = 'RENTAIL',
+  WHOLESALE = 'WHOLESALE',
+  DISTRIBUTOR = 'DISTRIBUTOR',
+}

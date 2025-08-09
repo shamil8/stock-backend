@@ -3,8 +3,10 @@ import {
   Controller,
   Get,
   HttpStatus,
+  Patch,
   Post,
   Query,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -25,6 +27,8 @@ import { ExceptionLocalCode } from '../../../enums/exception-local-code';
 import { ExceptionMessage } from '../../../enums/exception-message';
 import { CustomThrottlerGuard } from '../../auth/guards/custom-throttel.guard';
 import { JwtAccessGuard } from '../../auth/guards/jwt-access.guard';
+import { RequestInterface } from '../../auth/interfaces/request.interface';
+import { ChangeUserPasswordCommand } from '../dto/command/change-user-password.command';
 import { StoreUserCommand } from '../dto/command/store-user.command';
 import { UserListQuery } from '../dto/query/user-list.query';
 import { UserResource } from '../dto/resource/user.resource';
@@ -65,5 +69,24 @@ export class UserController {
   })
   createUser(@Body() command: StoreUserCommand): Promise<UserResource> {
     return this.usersService.createUser(command);
+  }
+
+  @Patch('password')
+  @ApiOperation({
+    summary: 'Change password',
+    description: 'Change user password',
+  })
+  @UseGuards(JwtAccessGuard)
+  @ApiBearerAuth()
+  @Throttle({ default: authRateLimitOptions })
+  @ApiOkResponse({
+    type: Boolean,
+    description: 'Password changed successfully',
+  })
+  changePassword(
+    @Request() { user }: RequestInterface,
+    @Body() command: ChangeUserPasswordCommand,
+  ): Promise<boolean> {
+    return this.usersService.changePassword(user.id, command);
   }
 }

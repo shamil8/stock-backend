@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { ExceptionLocalCode } from '../../../enums/exception-local-code';
 import { ExceptionMessage } from '../../../enums/exception-message';
 import { AppHttpException } from '../../../filters/app-http.exception';
+import { ChangeUserPasswordCommand } from '../dto/command/change-user-password.command';
 import { StoreUserCommand } from '../dto/command/store-user.command';
 import { UserListQuery } from '../dto/query/user-list.query';
 import { UserEntity } from '../entities/user.entity';
@@ -80,5 +81,39 @@ export class UserRepository {
 
   getUsernameFromEmail(email: string): string {
     return `${email.split('@')[0]}_${getNANOID()}`;
+  }
+
+  async changePassword(userId: string, command: ChangeUserPasswordCommand) {
+    const user = await this.findByColumn('id', userId, [
+      'id',
+      'createdAt',
+      'updatedAt',
+      'deletedAt',
+      'email',
+      'username',
+      'firstName',
+      'lastName',
+      'role',
+      'langCode',
+      'isEmailVerified',
+      'password',
+      'countryId',
+    ]);
+
+    console.log(user.validatePassword(command.currentPassword));
+
+    if (!user || !user.validatePassword(command.currentPassword)) {
+      throw new AppHttpException(
+        ExceptionMessage.WRONG_PASSWORD,
+        HttpStatus.FORBIDDEN,
+        ExceptionLocalCode.WRONG_PASSWORD,
+      );
+    }
+
+    user.password = command.newPassword;
+
+    await this.userRepository.save(user);
+
+    return true;
   }
 }

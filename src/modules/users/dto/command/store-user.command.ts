@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, MaxLength, MinLength } from 'class-validator';
+import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
 import { AuthCommand } from '../../../auth/dto/command/auth.command';
 
@@ -17,6 +17,7 @@ export class StoreUserCommand extends AuthCommand {
   })
   @IsString()
   @MinLength(2)
+  @IsOptional()
   @MaxLength(128)
   lastName?: string;
 }
