@@ -15,7 +15,7 @@ import {
 import { WorkersRoleEnum } from '../../enums/workers-role.enum';
 import { WorkerStatusEnum } from '../../enums/workers-status.enum';
 
-export class WorkersCommand {
+export class UpdateWorkersCommand {
   @ApiProperty({
     example: 'Salim',
     description: 'The firstname of the worker',
@@ -35,16 +35,6 @@ export class WorkersCommand {
   @MaxLength(20)
   @IsString()
   lastName?: string;
-
-  @ApiProperty({
-    required: true,
-    example: 'example@test.com',
-    description: 'The email of the worker',
-  })
-  @IsNotEmpty()
-  @IsEmail()
-  @Transform(({ value }) => value?.toLowerCase())
-  email!: string;
 
   @ApiProperty({
     example: '+992907701002',

@@ -17,23 +17,23 @@ import { HistoryService } from '../services/history.service';
 export class HistoriesController {
   constructor(private readonly historyService: HistoryService) {}
 
-  @Put()
-  @ApiOperation({
-    summary: 'Create history',
-    description: 'Create a new history',
-  })
-  @ApiOkResponse({
-    type: HistoryResource,
-    description: 'Successfully created history',
-  })
-  @UseGuards(JwtAccessGuard)
-  @ApiBearerAuth()
-  history(
-    @Request() { user }: RequestInterface,
-    @Body() dto: HistoryCommand,
-  ): Promise<HistoryResource> {
-    return this.historyService.createHistory(user.id, dto);
-  }
+  // @Put()
+  // @ApiOperation({
+  //   summary: 'Create history',
+  //   description: 'Create a new history',
+  // })
+  // @ApiOkResponse({
+  //   type: HistoryResource,
+  //   description: 'Successfully created history',
+  // })
+  // @UseGuards(JwtAccessGuard)
+  // @ApiBearerAuth()
+  // history(
+  //   @Request() { user }: RequestInterface,
+  //   @Body() dto: HistoryCommand,
+  // ): Promise<HistoryResource> {
+  //   return this.historyService.createHistory(user.id, dto);
+  // }
 
   @Get()
   @ApiOperation({

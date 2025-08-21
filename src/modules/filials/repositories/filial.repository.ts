@@ -1,0 +1,40 @@
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { ExceptionLocalCode } from '../../../enums/exception-local-code';
+import { ExceptionMessage } from '../../../enums/exception-message';
+import { AppHttpException } from '../../../filters/app-http.exception';
+import { FilialCommand } from '../dto/command/filial.command';
+import { FilialsEntity } from '../entities/filials.entity';
+
+@Injectable()
+export class FilialRepository {
+  constructor(
+    @InjectRepository(FilialsEntity)
+    private readonly filialsRepository: Repository<FilialsEntity>,
+  ) {}
+
+  async addFilial(command: FilialCommand) {
+    const exists = await this.filialsRepository
+      .createQueryBuilder('f')
+      .where('f.name = :name', { name: command.name })
+      .getOne();
+
+    if (exists) {
+      throw new AppHttpException(
+        ExceptionMessage.FILIAL_ALREADY_EXISTS,
+        HttpStatus.CONFLICT,
+        ExceptionLocalCode.FILIAL_ALREADY_EXISTS,
+      );
+    }
+
+    const filial = this.filialsRepository.create({ ...command });
+
+    return await this.filialsRepository.save(filial);
+  }
+
+  getAllFilials() {
+    return this.filialsRepository.createQueryBuilder().getMany();
+  }
+}

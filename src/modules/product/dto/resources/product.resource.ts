@@ -1,57 +1,70 @@
 import { ApiProperty } from '@nestjs/swagger';
+import {} from 'class-validator';
 
 export class ProductResource {
   @ApiProperty({
-    required: true,
-    example: 'EKFKV2WCDJK8',
+    example: 'EFE123',
     description: 'Product ID',
   })
   id!: string;
 
-  @ApiProperty({
-    example: 'Iphone 6 pro max',
-    description: 'Name of the product.',
-  })
+  @ApiProperty({ description: 'Name of the product' })
   name!: string;
 
-  @ApiProperty({
-    example: 'Smart phone Iphone 6 pro max 256gb l/la.',
-    description: 'All information about the product.',
-    required: false,
-  })
+  @ApiProperty({ description: 'Description of the product', required: false })
   description?: string;
 
-  @ApiProperty({
-    example: 243,
-    description: 'The weight of the product (in term of gramm).',
-    required: false,
-  })
+  @ApiProperty({ description: 'Brand of the product', required: false })
+  brand?: string;
+
+  @ApiProperty({ description: 'SKU code of the product', required: false })
+  sku?: string;
+
+  @ApiProperty({ description: 'Minimum stock quantity' })
+  minStock!: number;
+
+  @ApiProperty({ description: 'Maximum stock quantity' })
+  maxStock!: number;
+
+  @ApiProperty({ description: 'Weight of the product', required: false })
   weight?: number;
 
-  @ApiProperty({
-    example: 1500,
-    description: 'The price of the product (in term of USD).',
-  })
-  price!: number;
+  @ApiProperty({ description: 'Cost price of the product' })
+  costPrice!: number;
 
-  @ApiProperty({
-    example:
-      'https://www.google.com/search?sca_esv=fb8ace8cedc707a8&sxsrf=AHTn8zpOpaa323x21DNL-sx9KsdLUzzUEA:1743962938441&q=iphone+16+pro+max&udm=2&fbs=ABzOT_ALXLK7nhX51dCJFXZvftNljihIFR0bjYjZ2Ob11NWoDhmNR4s1JD1HRY6KzbHoVs50toPKAkqsSC60PyK493kqWy9BDH4BVurbV37fJZlncDuIrJD0HS4BNM2KW7ecBniI5nInxgR2rJGzm1qniQgkQylJitJyi9NrcrJ9ibJD_XXkCBFGPze9w8xCwT3e-uvusmXSonxkeOPpRKUaxw5nPhOuELS2nNQ-EO8Ud4tlkzryKcM&sa=X&ved=2ahUKEwjk2cmbgMSMAxXlU1UIHWtDPTIQtKgLegQIEhAB&biw=1470&bih=920&dpr=2#vhid=cI5KZ-xUN-rgVM&vssid=mosaic',
-    description: 'The link of picture of the product.',
-    required: false,
-  })
+  @ApiProperty({ description: 'Selling price of the product' })
+  sellingPrice!: number;
+
+  @ApiProperty({ description: 'Supplier of the product', required: false })
+  supplier!: string;
+
+  @ApiProperty({ description: 'Image URL of the product', required: false })
   imgUrl?: string;
 
-  @ApiProperty({
-    example: 11111,
-    description: 'The count of the product.',
-  })
+  @ApiProperty({ description: 'Available count of the product' })
   count!: number;
 
   @ApiProperty({
-    example: '4O14DVIXFY2Y',
-    description: 'The id of the category.',
+    description: 'Location of the product in the warehouse',
     required: false,
   })
-  categoryId?: string;
+  location?: string;
+
+  @ApiProperty({
+    description: 'Expiry date of the product',
+    required: false,
+    type: String,
+    format: 'date',
+  })
+  expiryDate?: Date;
+
+  @ApiProperty({
+    description: 'Status of the product',
+    required: false,
+    default: 'Out of stock',
+  })
+  status?: string;
+
+  @ApiProperty({ description: 'Category ID of the product' })
+  categoryId!: string;
 }

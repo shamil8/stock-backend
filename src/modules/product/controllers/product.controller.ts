@@ -59,13 +59,24 @@ export class ProductController {
     type: ProductResource,
     description: 'Got a list of products by their category',
   })
-  findProductsByCategory(
-    @Param() { id }: IdParamDto,
-  ): Promise<ProductResource[]> {
+  findProductsByCategory(@Param() { id }: IdParamDto) {
     return this.productService.findProductsByCategory(id);
   }
 
   @Get()
+  @ApiOperation({
+    summary: 'Get all products',
+    description: 'Get a list of products',
+  })
+  @ApiOkResponse({
+    type: ProductResource,
+    description: 'Got a list of products',
+  })
+  getAll() {
+    return this.productService.getAll();
+  }
+
+  @Get('name/:name')
   @ApiOperation({
     summary: 'Get all products by their name.',
     description: 'Get a list of all products by their name.',
@@ -74,17 +85,30 @@ export class ProductController {
     type: ProductResource,
     description: 'Got a list of all products by their name.',
   })
-  getAll(@Query() query: ProductListQuery): Promise<ProductResource[]> {
-    return this.productService.findAll(query);
+  getByName(@Query() query: ProductListQuery): Promise<ProductResource[]> {
+    return this.productService.findByName(query);
   }
 
-  @Get('/:id')
+  @Get(':id')
   @ApiOperation({
     summary: 'Get a product',
     description: 'Get a product by its id',
   })
-  findOne(@Param() { id }: IdParamDto): Promise<ProductResource | null> {
+  findOne(@Param() { id }: IdParamDto): Promise<ProductResource> {
+    console.log('iddddd:', id);
+
     return this.productService.findOne(id);
+  }
+
+  @Get('filial/:productId')
+  @ApiOperation({
+    summary: 'Get count of products in filials',
+    description: 'Get a list of count of product in filials .',
+  })
+  getFilialByProduct(@Param('productId') id: string) {
+    console.log('iddddd:', id);
+
+    return this.productService.getFilialByProduct(id);
   }
 
   @Put('/:id')

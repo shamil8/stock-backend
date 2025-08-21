@@ -1,7 +1,17 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
+import { UpdateWorkersCommand } from '../dto/command/update-workers.command';
 import { WorkersCommand } from '../dto/command/workers.command';
+import { WorkersResource } from '../dto/resource/worker.resource';
 import { WorkersService } from '../services/workers.service';
 
 @ApiTags('Workers')
@@ -13,7 +23,7 @@ export class WorkersController {
     summary: 'Add a new worker',
     description: 'Add a new worker',
   })
-  addWorker(@Body() command: WorkersCommand) {
+  addWorker(@Body() command: WorkersCommand): Promise<WorkersResource> {
     return this.workersService.addWorker(command);
   }
 
@@ -22,8 +32,20 @@ export class WorkersController {
     summary: 'Get all workers',
     description: 'Get all workers',
   })
-  getAllWorkers() {
+  getAllWorkers(): Promise<WorkersResource[]> {
     return this.workersService.getAllWorkers();
+  }
+
+  @Put(':id')
+  @ApiOperation({
+    summary: 'Update worker',
+    description: 'Updateworker by id',
+  })
+  updateWorker(
+    @Param('id') id: string,
+    @Body() command: UpdateWorkersCommand,
+  ): Promise<boolean> {
+    return this.workersService.updateWorker(id, command);
   }
 
   @Delete(':id')
@@ -31,7 +53,7 @@ export class WorkersController {
     summary: 'Delete worker',
     description: 'Delete worker by id',
   })
-  deleteWorker(@Param('id') id: string) {
+  deleteWorker(@Param('id') id: string): Promise<boolean> {
     return this.workersService.deleteWorker(id);
   }
 }

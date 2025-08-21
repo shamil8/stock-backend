@@ -30,7 +30,11 @@ export class ProductRepository {
     return await this.productRepository.save(product);
   }
 
-  async findOne(id: string): Promise<ProductEntity> {
+  async getAll(): Promise<ProductResource[]> {
+    return await this.productRepository.createQueryBuilder().getMany();
+  }
+
+  async findOne(id: string): Promise<ProductResource> {
     const product = await this.productRepository
       .createQueryBuilder('p')
       .where('p.id = :id', { id })
@@ -59,11 +63,14 @@ export class ProductRepository {
     return products;
   }
 
-  async findAll(query: ProductListQuery): Promise<ProductResource[]> {
-    const products = await this.productRepository
-      .createQueryBuilder('p')
-      .AndSearch(['p.name', 'p.description'], query.name)
-      .getMany();
+  async findByName(query: ProductListQuery): Promise<ProductResource[]> {
+    const qb = this.productRepository.createQueryBuilder('p');
+
+    if (query.name) {
+      qb.where('p.name ILIKE :name', { name: `%${query.name}%` });
+    }
+
+    const products = await qb.getMany();
 
     return products;
   }

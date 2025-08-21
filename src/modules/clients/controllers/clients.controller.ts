@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
@@ -35,14 +36,14 @@ export class ClientsController {
     return this.clientsService.getAllClients();
   }
 
-  @Patch('/:id')
+  @Put('/:id')
   @ApiOperation({
     summary: 'Update client',
     description: 'Update an existing client',
   })
   @ApiOkResponse({ description: 'Successfully updated.' })
-  updateClient(@Param('id') email: string, @Body() command: ClientsCommand) {
-    return this.clientsService.updateClient(email, command);
+  updateClient(@Param('id') id: string, @Body() command: ClientsCommand) {
+    return this.clientsService.updateClient(id, command);
   }
 
   @Delete('/:id')

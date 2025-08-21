@@ -1,6 +1,6 @@
 export enum WorkersRoleEnum {
   MANAGER = 'manager',
-  SUPERVISITOR = 'supervisor',
+  ADMIN = 'admin',
   WORKER = 'worker',
   INTERN = 'intern',
 }

@@ -15,7 +15,7 @@ export class HistoryCommand {
     description: 'the amount of change that occurs',
     required: false,
   })
-  diff!: number;
+  diff?: number;
 
   @ApiProperty({
     example: 'History description',

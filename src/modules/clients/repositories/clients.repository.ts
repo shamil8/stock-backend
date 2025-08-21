@@ -7,6 +7,7 @@ import { ExceptionMessage } from '../../../enums/exception-message';
 import { AppHttpException } from '../../../filters/app-http.exception';
 import { ClientsCommand } from '../dto/command/clients.command';
 import { UpdateClientCommand } from '../dto/command/update-client.command';
+import { ClientsResource } from '../dto/resources/client.resource';
 import { ClientsEntity } from '../entities/clients.entity';
 
 @Injectable()
@@ -16,7 +17,7 @@ export class ClientsRepository {
     private readonly clientsRepository: Repository<ClientsEntity>,
   ) {}
 
-  async findClientByEmail(email: string): Promise<ClientsEntity | null> {
+  async findClientByEmail(email: string): Promise<ClientsResource | null> {
     const client = await this.clientsRepository
       .createQueryBuilder('c')
       .where('c.email = :email', { email })
@@ -25,7 +26,7 @@ export class ClientsRepository {
     return client;
   }
 
-  async findClientByIdOrThrow(id: string): Promise<ClientsEntity> {
+  async findClientByIdOrThrow(id: string): Promise<ClientsResource> {
     const client = await this.clientsRepository
       .createQueryBuilder('c')
       .where('c.id = :id', { id })
@@ -42,7 +43,7 @@ export class ClientsRepository {
     return client;
   }
 
-  async addClient(command: ClientsCommand) {
+  async addClient(command: ClientsCommand): Promise<ClientsResource> {
     const client = await this.findClientByEmail(command.email);
 
     if (client) {
@@ -55,16 +56,17 @@ export class ClientsRepository {
 
     const newClient = this.clientsRepository.create(command);
 
-    await this.clientsRepository.save(newClient);
-
-    return newClient;
+    return await this.clientsRepository.save(newClient);
   }
 
-  async getAllClients(): Promise<ClientsEntity[]> {
+  async getAllClients(): Promise<ClientsResource[]> {
     return await this.clientsRepository.createQueryBuilder('c').getMany();
   }
 
-  async updateClient(id: string, command: UpdateClientCommand) {
+  async updateClient(
+    id: string,
+    command: UpdateClientCommand,
+  ): Promise<ClientsResource> {
     await this.findClientByIdOrThrow(id);
 
     await this.clientsRepository
@@ -77,7 +79,7 @@ export class ClientsRepository {
     return await this.findClientByIdOrThrow(id);
   }
 
-  async deleteClientById(id: string) {
+  async deleteClientById(id: string): Promise<boolean> {
     await this.findClientByIdOrThrow(id);
 
     await this.clientsRepository

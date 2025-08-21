@@ -5,7 +5,9 @@ import { Repository } from 'typeorm';
 import { ExceptionLocalCode } from '../../../enums/exception-local-code';
 import { ExceptionMessage } from '../../../enums/exception-message';
 import { AppHttpException } from '../../../filters/app-http.exception';
+import { UpdateWorkersCommand } from '../dto/command/update-workers.command';
 import { WorkersCommand } from '../dto/command/workers.command';
+import { WorkersResource } from '../dto/resource/worker.resource';
 import { WorkersEntity } from '../entities/workers.entity';
 
 @Injectable()
@@ -15,14 +17,14 @@ export class WorkersRepository {
     private readonly workersRepository: Repository<WorkersEntity>,
   ) {}
 
-  async findByEmail(email: string): Promise<WorkersEntity | null> {
+  async findByEmail(email: string): Promise<WorkersResource | null> {
     return await this.workersRepository
       .createQueryBuilder('w')
       .where('w.email = :email', { email })
       .getOne();
   }
 
-  async getWorkerByIdOrThrow(id: string) {
+  async getWorkerByIdOrThrow(id: string): Promise<WorkersResource> {
     const worker = await this.workersRepository
       .createQueryBuilder('w')
       .where('w.id = :id', { id })
@@ -39,7 +41,7 @@ export class WorkersRepository {
     return worker;
   }
 
-  async add(command: WorkersCommand) {
+  async add(command: WorkersCommand): Promise<WorkersResource> {
     const worker = await this.findByEmail(command.email);
 
     if (worker) {
@@ -52,16 +54,30 @@ export class WorkersRepository {
 
     const saveWorker = this.workersRepository.create(command);
 
-    await this.workersRepository.save(saveWorker);
-
-    return await this.findByEmail(command.email);
+    return await this.workersRepository.save(saveWorker);
   }
 
-  async getAllWorkers() {
+  async getAllWorkers(): Promise<WorkersResource[]> {
     return await this.workersRepository.createQueryBuilder('w').getMany();
   }
 
-  async deleteWorker(id: string) {
+  async updateWorker(
+    id: string,
+    command: UpdateWorkersCommand,
+  ): Promise<boolean> {
+    await this.getWorkerByIdOrThrow(id);
+
+    await this.workersRepository
+      .createQueryBuilder('w')
+      .update()
+      .set(command)
+      .where('id = :id', { id })
+      .execute();
+
+    return true;
+  }
+
+  async deleteWorker(id: string): Promise<boolean> {
     await this.getWorkerByIdOrThrow(id);
 
     await this.workersRepository

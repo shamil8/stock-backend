@@ -1,59 +1,90 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class ProductCommand {
-  @ApiProperty({
-    example: 'Iphone 6 pro max',
-    description: 'Name of the product.',
-  })
+  @ApiProperty({ description: 'Name of the product' })
   @IsString()
+  @IsNotEmpty()
   name!: string;
 
-  @ApiProperty({
-    example: 'Smart phone Iphone 6 pro max 256gb l/la.',
-    description: 'All information about the product.',
-    required: false,
-  })
+  @ApiProperty({ description: 'Description of the product', required: false })
   @IsString()
+  @IsOptional()
   description?: string;
 
-  @ApiProperty({
-    example: 243,
-    description: 'The weight of the product (in term of gramm).',
-    required: false,
-  })
+  @ApiProperty({ description: 'Brand of the product', required: false })
+  @IsString()
+  @IsOptional()
+  brand?: string;
+
+  @ApiProperty({ description: 'SKU code of the product', required: false })
+  @IsString()
+  @IsOptional()
+  sku?: string;
+
+  @ApiProperty({ description: 'Minimum stock quantity' })
   @IsNumber()
+  @IsNotEmpty()
+  minStock!: number;
+
+  @ApiProperty({ description: 'Maximum stock quantity' })
+  @IsNumber()
+  @IsNotEmpty()
+  maxStock!: number;
+
+  @ApiProperty({ description: 'Weight of the product', required: false })
+  @IsNumber()
+  @IsOptional()
   weight?: number;
 
-  @ApiProperty({
-    example: 1500,
-    description: 'The price of the product (in term of USD).',
-  })
+  @ApiProperty({ description: 'Cost price of the product' })
   @IsNumber()
-  price!: number;
+  @IsNotEmpty()
+  costPrice!: number;
 
-  @ApiProperty({
-    example:
-      'https://www.google.com/search?sca_esv=fb8ace8cedc707a8&sxsrf=AHTn8zpOpaa323x21DNL-sx9KsdLUzzUEA:1743962938441&q=iphone+16+pro+max&udm=2&fbs=ABzOT_ALXLK7nhX51dCJFXZvftNljihIFR0bjYjZ2Ob11NWoDhmNR4s1JD1HRY6KzbHoVs50toPKAkqsSC60PyK493kqWy9BDH4BVurbV37fJZlncDuIrJD0HS4BNM2KW7ecBniI5nInxgR2rJGzm1qniQgkQylJitJyi9NrcrJ9ibJD_XXkCBFGPze9w8xCwT3e-uvusmXSonxkeOPpRKUaxw5nPhOuELS2nNQ-EO8Ud4tlkzryKcM&sa=X&ved=2ahUKEwjk2cmbgMSMAxXlU1UIHWtDPTIQtKgLegQIEhAB&biw=1470&bih=920&dpr=2#vhid=cI5KZ-xUN-rgVM&vssid=mosaic',
-    description: 'The link of picture of the product.',
-    required: false,
-  })
+  @ApiProperty({ description: 'Selling price of the product' })
+  @IsNumber()
+  @IsNotEmpty()
+  sellingPrice!: number;
+
+  @ApiProperty({ description: 'Supplier of the product', required: false })
+  @IsString()
   @IsOptional()
-  @IsUrl()
+  supplier!: string;
+
+  @ApiProperty({ description: 'Image URL of the product', required: false })
+  @IsString()
+  @IsOptional()
   imgUrl?: string;
 
   @ApiProperty({
-    example: 11111,
-    description: 'The count of the product.',
-  })
-  @IsNumber()
-  count!: number;
-
-  @ApiProperty({
-    example: '4O14DVIXFY2Y',
-    description: 'The id of the category.',
+    description: 'Location of the product in the warehouse',
     required: false,
   })
   @IsString()
+  @IsOptional()
+  location?: string;
+
+  @ApiProperty({
+    description: 'Expiry date of the product',
+    required: false,
+    type: String,
+    format: 'date',
+  })
+  @IsOptional()
+  expiryDate?: Date;
+
+  @ApiProperty({
+    description: 'Status of the product',
+    required: false,
+    default: 'Out of stock',
+  })
+  @IsString()
+  @IsOptional()
+  status?: string;
+
+  @ApiProperty({ description: 'Category ID of the product' })
+  @IsString()
+  @IsNotEmpty()
   categoryId!: string;
 }
