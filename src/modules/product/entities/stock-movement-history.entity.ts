@@ -3,7 +3,7 @@ import { Column, Entity, ManyToOne } from 'typeorm';
 
 import { ProductEntity } from './product.entity';
 
-@Entity()
+@Entity({ schema: 'stock', name: 'stock-movement-history' })
 export class StockMovementHistoryEntity extends BaseEntity {
   @Column()
   productId!: string;

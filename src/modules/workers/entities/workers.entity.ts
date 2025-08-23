@@ -1,26 +1,26 @@
 import { BaseEntity } from '@app/database/entities/base.entity';
-import { BeforeInsert, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { Unique } from 'typeorm';
 
-import { FilialsEntity } from '../../filials/entities/filials.entity';
-import { WorkersRoleEnum } from '../enums/workers-role.enum';
+import { UserEntity } from '../../users/entities/user.entity';
 import { WorkerStatusEnum } from '../enums/workers-status.enum';
 import { WorkersAttendanceEntity } from './workers-attendance.entity';
 
 @Entity({ schema: 'workers', name: 'workers' })
-@Unique(['email'])
 export class WorkersEntity extends BaseEntity {
   @Column({ type: 'varchar', length: 20, unique: true })
   employeeId!: string;
 
   @Column()
-  firstName!: string;
-
-  @Column()
-  lastName?: string;
-
-  @Column()
-  email!: string;
+  accountId!: string;
 
   @Column()
   phone?: string;
@@ -29,19 +29,7 @@ export class WorkersEntity extends BaseEntity {
   address?: string;
 
   @Column({ nullable: true })
-  department?: string;
-
-  @Column()
-  filialId!: string;
-
-  @ManyToOne(() => FilialsEntity, (fl) => fl.workers)
-  filial!: FilialsEntity;
-
-  @Column({ nullable: true })
   position?: string;
-
-  @Column({ default: WorkersRoleEnum.WORKER })
-  role!: WorkersRoleEnum;
 
   @Column({ type: 'float', default: 0 })
   salary!: number;
@@ -73,4 +61,7 @@ export class WorkersEntity extends BaseEntity {
 
   @OneToMany(() => WorkersAttendanceEntity, (att) => att.worker)
   attendances!: WorkersAttendanceEntity[];
+
+  @ManyToOne(() => UserEntity, (us) => us.worker)
+  account!: UserEntity;
 }

@@ -9,7 +9,7 @@ import { WorkersRepository } from '../repositories/workers.repository';
 export class WorkersService {
   constructor(private readonly workersRepository: WorkersRepository) {}
 
-  addWorker(command: WorkersCommand): Promise<WorkersResource> {
+  addWorker(command: WorkersCommand): Promise<boolean> {
     return this.workersRepository.add(command);
   }
 

@@ -23,7 +23,7 @@ export class WorkersController {
     summary: 'Add a new worker',
     description: 'Add a new worker',
   })
-  addWorker(@Body() command: WorkersCommand): Promise<WorkersResource> {
+  addWorker(@Body() command: WorkersCommand): Promise<boolean> {
     return this.workersService.addWorker(command);
   }
 

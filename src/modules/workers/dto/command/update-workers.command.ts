@@ -1,8 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
 import {
   IsArray,
-  IsEmail,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -12,7 +10,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-import { WorkersRoleEnum } from '../../enums/workers-role.enum';
+import { UserRole } from '../../../users/enums/user-role';
 import { WorkerStatusEnum } from '../../enums/workers-status.enum';
 
 export class UpdateWorkersCommand {
@@ -71,13 +69,13 @@ export class UpdateWorkersCommand {
   position?: string;
 
   @ApiProperty({
-    example: WorkersRoleEnum.WORKER,
+    example: UserRole.WORKER,
     description: 'The role of the worker',
-    enum: WorkersRoleEnum,
+    enum: UserRole,
   })
   @IsOptional()
-  @IsEnum(WorkersRoleEnum)
-  role?: WorkersRoleEnum;
+  @IsEnum(UserRole)
+  role?: UserRole;
 
   @ApiProperty({
     example: 5000,

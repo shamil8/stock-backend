@@ -1,9 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString } from 'class-validator';
 
-import { WorkersRoleEnum } from '../../enums/workers-role.enum';
+import { UserRole } from '../../../users/enums/user-role';
 import { WorkerStatusEnum } from '../../enums/workers-status.enum';
 
 export class WorkersResource {
+  @ApiProperty({
+    example: 'FDS21',
+    description: 'the id of the account',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  accountId!: string;
+
   @ApiProperty({
     example: 'Salim',
     description: 'The firstname of the worker',
@@ -48,11 +58,11 @@ export class WorkersResource {
   position?: string;
 
   @ApiProperty({
-    example: WorkersRoleEnum.WORKER,
+    example: UserRole.WORKER,
     description: 'The role of the worker',
-    enum: WorkersRoleEnum,
+    enum: UserRole,
   })
-  role?: WorkersRoleEnum;
+  role?: UserRole;
 
   @ApiProperty({
     example: 5000,

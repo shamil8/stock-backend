@@ -1,8 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
 import {
   IsArray,
-  IsEmail,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -12,39 +10,17 @@ import {
   MinLength,
 } from 'class-validator';
 
-import { WorkersRoleEnum } from '../../enums/workers-role.enum';
 import { WorkerStatusEnum } from '../../enums/workers-status.enum';
 
 export class WorkersCommand {
   @ApiProperty({
-    example: 'Salim',
-    description: 'The firstname of the worker',
-  })
-  @IsNotEmpty()
-  @MinLength(3)
-  @MaxLength(20)
-  @IsString()
-  firstName!: string;
-
-  @ApiProperty({
-    example: 'Odilov',
-    description: 'The lastname of the worker',
-  })
-  @IsOptional()
-  @MinLength(3)
-  @MaxLength(20)
-  @IsString()
-  lastName?: string;
-
-  @ApiProperty({
+    example: 'FDS21',
+    description: 'the id of the account',
     required: true,
-    example: 'example@test.com',
-    description: 'The email of the worker',
   })
+  @IsString()
   @IsNotEmpty()
-  @IsEmail()
-  @Transform(({ value }) => value?.toLowerCase())
-  email!: string;
+  accountId!: string;
 
   @ApiProperty({
     example: '+992907701002',
@@ -65,29 +41,12 @@ export class WorkersCommand {
   address?: string;
 
   @ApiProperty({
-    example: 'Магозаи хуроквории Чорерон',
-    description: 'The department where the worker works',
-  })
-  @IsOptional()
-  @IsString()
-  department?: string;
-
-  @ApiProperty({
     example: 'Sales Manager',
     description: 'The position of the worker',
   })
   @IsOptional()
   @IsString()
   position?: string;
-
-  @ApiProperty({
-    example: WorkersRoleEnum.WORKER,
-    description: 'The role of the worker',
-    enum: WorkersRoleEnum,
-  })
-  @IsOptional()
-  @IsEnum(WorkersRoleEnum)
-  role?: WorkersRoleEnum;
 
   @ApiProperty({
     example: 5000,

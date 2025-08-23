@@ -1,9 +1,19 @@
 import { BaseEntity } from '@app/database/entities/base.entity';
 import { pbkdf2Sync, randomBytes } from 'crypto';
-import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 
+import { FilialsEntity } from '../../filials/entities/filials.entity';
 import { CountryEntity } from '../../system/entities/country.entity';
 import { LanguageCode } from '../../system/enums/language-code';
+import { WorkersEntity } from '../../workers/entities/workers.entity';
 import { UserRole } from '../enums/user-role';
 
 @Entity({ schema: 'users', name: 'users' })
@@ -22,6 +32,12 @@ export class UserEntity extends BaseEntity {
 
   @Column({ length: 55 })
   role!: UserRole;
+
+  @Column({ nullable: false })
+  department!: string;
+
+  @Column({ nullable: false })
+  filialsId!: string;
 
   @Column({ length: 3, default: LanguageCode.EN })
   langCode!: LanguageCode;
@@ -66,4 +82,10 @@ export class UserEntity extends BaseEntity {
 
   @ManyToOne(() => CountryEntity, (country) => country.users)
   country?: CountryEntity;
+
+  @ManyToOne(() => FilialsEntity, (fl) => fl.users, { onDelete: 'CASCADE' })
+  filials!: FilialsEntity;
+
+  @OneToMany(() => WorkersEntity, (wk) => wk.account)
+  worker!: WorkersEntity;
 }

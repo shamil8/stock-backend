@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { ExceptionLocalCode } from '../../../enums/exception-local-code';
 import { ExceptionMessage } from '../../../enums/exception-message';
 import { AppHttpException } from '../../../filters/app-http.exception';
+import { UserService } from '../../users/services/user.service';
 import { UpdateWorkersCommand } from '../dto/command/update-workers.command';
 import { WorkersCommand } from '../dto/command/workers.command';
 import { WorkersResource } from '../dto/resource/worker.resource';
@@ -15,18 +16,34 @@ export class WorkersRepository {
   constructor(
     @InjectRepository(WorkersEntity)
     private readonly workersRepository: Repository<WorkersEntity>,
+    private readonly userService: UserService,
   ) {}
 
-  async findByEmail(email: string): Promise<WorkersResource | null> {
-    return await this.workersRepository
-      .createQueryBuilder('w')
-      .where('w.email = :email', { email })
-      .getOne();
+  toWorkerResource(entity: WorkersEntity) {
+    return {
+      accountId: entity.accountId,
+      firstName: entity.account?.firstName ?? '',
+      lastName: entity.account?.lastName ?? '',
+      email: entity.account?.email ?? '',
+      phone: entity.phone,
+      address: entity.address,
+      department: entity.account?.department ?? '',
+      position: entity.position,
+      role: entity.account?.role,
+      salary: entity.salary,
+      commission: entity.commission,
+      status: entity.status,
+      manager: entity.manager,
+      skills: entity.skills,
+      notes: entity.notes,
+      salesTarget: entity.salesTarget,
+    };
   }
 
   async getWorkerByIdOrThrow(id: string): Promise<WorkersResource> {
     const worker = await this.workersRepository
       .createQueryBuilder('w')
+      .leftJoinAndSelect('w.account', 'ac')
       .where('w.id = :id', { id })
       .getOne();
 
@@ -38,27 +55,35 @@ export class WorkersRepository {
       );
     }
 
-    return worker;
+    return this.toWorkerResource(worker);
   }
 
-  async add(command: WorkersCommand): Promise<WorkersResource> {
-    const worker = await this.findByEmail(command.email);
+  async add(command: WorkersCommand): Promise<boolean> {
+    const account = await this.userService.findUserById(command.accountId);
 
-    if (worker) {
+    if (!account) {
       throw new AppHttpException(
-        ExceptionMessage.WORKER_ALREADY_EXISTS,
-        HttpStatus.BAD_REQUEST,
-        ExceptionLocalCode.WORKER_ALREADY_EXISTS,
+        ExceptionMessage.USER_NOT_FOUND,
+        HttpStatus.NOT_FOUND,
+        ExceptionLocalCode.USER_NOT_FOUND,
       );
     }
 
-    const saveWorker = this.workersRepository.create(command);
+    const saveWorker = this.workersRepository.create({
+      ...command,
+    });
 
-    return await this.workersRepository.save(saveWorker);
+    await this.workersRepository.save(saveWorker);
+
+    return true;
   }
 
   async getAllWorkers(): Promise<WorkersResource[]> {
-    return await this.workersRepository.createQueryBuilder('w').getMany();
+    const workers = await this.workersRepository
+      .createQueryBuilder('w')
+      .getMany();
+
+    return workers.map((w) => this.toWorkerResource(w));
   }
 
   async updateWorker(

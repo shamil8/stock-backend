@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { getNANOID } from '@app/crypto-utils/functions/export-settings';
 import { FindAndCountType } from '@app/crypto-utils/interfaces/find-and-count.type';
 import { LoggerService } from '@app/logger/services/logger.service';
+import { use } from 'passport';
 import { Repository } from 'typeorm';
 
 import { ExceptionLocalCode } from '../../../enums/exception-local-code';
@@ -12,7 +13,6 @@ import { ChangeUserPasswordCommand } from '../dto/command/change-user-password.c
 import { StoreUserCommand } from '../dto/command/store-user.command';
 import { UserListQuery } from '../dto/query/user-list.query';
 import { UserEntity } from '../entities/user.entity';
-import { UserRole } from '../enums/user-role';
 
 @Injectable()
 export class UserRepository {
@@ -63,17 +63,16 @@ export class UserRepository {
     );
   }
 
-  async storeUser(
-    command: StoreUserCommand,
-    role = UserRole.USER,
-  ): Promise<UserEntity> {
+  async storeUser(command: StoreUserCommand): Promise<UserEntity> {
     const user = this.userRepository.create({
       email: command.email,
       password: command.password,
       firstName: command.firstName,
       lastName: command.lastName,
       username: this.getUsernameFromEmail(command.email),
-      role,
+      department: command.department,
+      filialsId: command.filialId,
+      role: command.role,
     });
 
     return this.userRepository.save(user);
@@ -86,21 +85,15 @@ export class UserRepository {
   async changePassword(userId: string, command: ChangeUserPasswordCommand) {
     const user = await this.findByColumn('id', userId, [
       'id',
-      'createdAt',
-      'updatedAt',
-      'deletedAt',
       'email',
+      'password',
       'username',
       'firstName',
       'lastName',
       'role',
-      'langCode',
-      'isEmailVerified',
-      'password',
-      'countryId',
+      'department',
+      'filialsId',
     ]);
-
-    console.log(user.validatePassword(command.currentPassword));
 
     if (!user || !user.validatePassword(command.currentPassword)) {
       throw new AppHttpException(

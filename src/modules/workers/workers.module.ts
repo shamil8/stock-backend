@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { UserRepository } from '../users/repositories/user.repository';
+import { UserModule } from '../users/user.module';
 import { WorkersController } from './controllers/workers.controller';
 import { WorkersAttendanceController } from './controllers/workers-attendance.controller';
 import { WorkersEntity } from './entities/workers.entity';
@@ -11,7 +13,10 @@ import { WorkersService } from './services/workers.service';
 import { WorkersAttendanceService } from './services/workers-attendance.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([WorkersEntity, WorkersAttendanceEntity])],
+  imports: [
+    TypeOrmModule.forFeature([WorkersEntity, WorkersAttendanceEntity]),
+    UserModule,
+  ],
   controllers: [WorkersController, WorkersAttendanceController],
   providers: [
     WorkersService,

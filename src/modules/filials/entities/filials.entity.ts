@@ -2,6 +2,7 @@ import { BaseEntity } from '@app/database/entities/base.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 
 import { StockMovementEntity } from '../../product/entities/stock-movement.entity';
+import { UserEntity } from '../../users/entities/user.entity';
 import { WorkersEntity } from '../../workers/entities/workers.entity';
 import { FilialStatusEnum, FilialTypeEnum } from '../enums/filial.enum';
 import { FilialsProductsEntity } from './filials-products.entity';
@@ -41,8 +42,8 @@ export class FilialsEntity extends BaseEntity {
   @Column({ type: 'int', default: 0 })
   capacity!: number;
 
-  @OneToMany(() => WorkersEntity, (pr) => pr.filial)
-  workers!: WorkersEntity[];
+  @OneToMany(() => UserEntity, (us) => us.filials)
+  users!: UserEntity[];
 
   @OneToMany(() => FilialsProductsEntity, (fp) => fp.filial)
   products!: FilialsProductsEntity[];

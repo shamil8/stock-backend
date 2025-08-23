@@ -81,6 +81,8 @@ export class UserService {
     userId: string,
     command: ChangeUserPasswordCommand,
   ): Promise<boolean> {
+    console.log('useridddd', userId);
+
     return this.userRepository.changePassword(userId, command);
   }
 }

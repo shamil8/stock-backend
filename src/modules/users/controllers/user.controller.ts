@@ -3,8 +3,8 @@ import {
   Controller,
   Get,
   HttpStatus,
-  Patch,
   Post,
+  Put,
   Query,
   Request,
   UseGuards,
@@ -71,7 +71,7 @@ export class UserController {
     return this.usersService.createUser(command);
   }
 
-  @Patch('password')
+  @Put('password')
   @ApiOperation({
     summary: 'Change password',
     description: 'Change user password',
