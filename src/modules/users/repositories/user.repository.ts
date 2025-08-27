@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { getNANOID } from '@app/crypto-utils/functions/export-settings';
 import { FindAndCountType } from '@app/crypto-utils/interfaces/find-and-count.type';
 import { LoggerService } from '@app/logger/services/logger.service';
-import { use } from 'passport';
 import { Repository } from 'typeorm';
 
 import { ExceptionLocalCode } from '../../../enums/exception-local-code';

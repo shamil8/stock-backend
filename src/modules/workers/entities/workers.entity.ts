@@ -1,15 +1,7 @@
 import { BaseEntity } from '@app/database/entities/base.entity';
-import {
-  BeforeInsert,
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-} from 'typeorm';
-import { Unique } from 'typeorm';
+import { BeforeInsert, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
+import { StockMovementEntity } from '../../product/entities/stock-movement.entity';
 import { UserEntity } from '../../users/entities/user.entity';
 import { WorkerStatusEnum } from '../enums/workers-status.enum';
 import { WorkersAttendanceEntity } from './workers-attendance.entity';
@@ -53,7 +45,7 @@ export class WorkersEntity extends BaseEntity {
   salesTarget!: number;
 
   @BeforeInsert()
-  generateEmployeeId() {
+  generateEmployeeId(): void {
     const randomNum = Math.floor(1000 + Math.random() * 9000);
 
     this.employeeId = `EMP${randomNum}`;

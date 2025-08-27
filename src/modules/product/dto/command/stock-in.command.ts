@@ -41,7 +41,7 @@ export class StockInCommand {
   })
   @IsString()
   @IsNotEmpty()
-  filial!: string;
+  filialId!: string;
 
   @ApiProperty({
     example: StockMovemantsFromEnum.SUPPLIER,
@@ -59,8 +59,8 @@ export class StockInCommand {
     required: false,
   })
   @IsString()
-  @IsNotEmpty()
-  partyType!: string;
+  @IsOptional()
+  partyType?: string;
 
   @ApiProperty({
     example: 'Batch #2025, expires in 1 year',

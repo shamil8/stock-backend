@@ -3,7 +3,6 @@ import { Column, Entity, OneToMany } from 'typeorm';
 
 import { StockMovementEntity } from '../../product/entities/stock-movement.entity';
 import { UserEntity } from '../../users/entities/user.entity';
-import { WorkersEntity } from '../../workers/entities/workers.entity';
 import { FilialStatusEnum, FilialTypeEnum } from '../enums/filial.enum';
 import { FilialsProductsEntity } from './filials-products.entity';
 

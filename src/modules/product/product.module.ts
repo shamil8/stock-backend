@@ -5,9 +5,14 @@ import { LoggerModule } from '@app/logger/logger.module';
 
 import { CategoryEntity } from '../category/entities/category.entity';
 import { CategoryRepository } from '../category/repositories/category.repository';
+import { ClientsEntity } from '../clients/entities/clients.entity';
+import { ClientsRepository } from '../clients/repositories/clients.repository';
+import { FilialsEntity } from '../filials/entities/filials.entity';
 import { FilialsProductsEntity } from '../filials/entities/filials-products.entity';
+import { FilialRepository } from '../filials/repositories/filial.repository';
 import { FilialsProductsRepository } from '../filials/repositories/filials-products.repository';
 import { UserEntity } from '../users/entities/user.entity';
+import { WorkersRepository } from '../workers/repositories/workers.repository';
 import { HistoriesController } from './controllers/histories.controller';
 import { ProductController } from './controllers/product.controller';
 import { StockMovementController } from './controllers/stock-movement.controller';
@@ -27,10 +32,11 @@ import { StockMovementService } from './services/stock-movement.service';
     TypeOrmModule.forFeature([
       ProductEntity,
       ProductHistoryEntity,
-      UserEntity,
       CategoryEntity,
       StockMovementEntity,
       FilialsProductsEntity,
+      ClientsEntity,
+      FilialsEntity,
     ]),
   ],
   controllers: [
@@ -45,6 +51,8 @@ import { StockMovementService } from './services/stock-movement.service';
     CategoryRepository,
     StockMovementRepository,
     FilialsProductsRepository,
+    ClientsRepository,
+    FilialRepository,
 
     // services
     ProductService,

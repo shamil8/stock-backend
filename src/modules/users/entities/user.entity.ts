@@ -11,6 +11,8 @@ import {
 } from 'typeorm';
 
 import { FilialsEntity } from '../../filials/entities/filials.entity';
+import { ProductHistoryEntity } from '../../product/entities/productHistory.entity';
+import { StockMovementEntity } from '../../product/entities/stock-movement.entity';
 import { CountryEntity } from '../../system/entities/country.entity';
 import { LanguageCode } from '../../system/enums/language-code';
 import { WorkersEntity } from '../../workers/entities/workers.entity';
@@ -88,4 +90,10 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(() => WorkersEntity, (wk) => wk.account)
   worker!: WorkersEntity;
+
+  @OneToMany(() => StockMovementEntity, (st) => st.user)
+  movements!: StockMovementEntity[];
+
+  @OneToMany(() => ProductHistoryEntity, (ph) => ph.user)
+  productHistory!: ProductHistoryEntity[];
 }

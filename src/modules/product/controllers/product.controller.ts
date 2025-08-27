@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -22,6 +23,7 @@ import { ApiAppException } from '../../../dto/resource/app-exception.resource';
 import { ExceptionLocalCode } from '../../../enums/exception-local-code';
 import { ExceptionMessage } from '../../../enums/exception-message';
 import { JwtAccessGuard } from '../../auth/guards/jwt-access.guard';
+import { RequestInterface } from '../../auth/interfaces/request.interface';
 import { ProductCommand } from '../dto/command/product.command';
 import { UpdateProductCommand } from '../dto/command/update-product.command';
 import { ProductListQuery } from '../dto/query/product-list.query';
@@ -33,12 +35,14 @@ import { ProductService } from '../services/product.service';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
   @Post()
+  @UseGuards(JwtAccessGuard)
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Add a new product',
     description: 'Add a new product',
   })
   @ApiOkResponse({
-    type: ProductResource,
+    type: Boolean,
     description: 'Got new product',
   })
   @ApiAppException({
@@ -46,8 +50,11 @@ export class ProductController {
     description: ExceptionMessage.CATEGORY_EXISTS,
     localCode: ExceptionLocalCode.CATEGORY_EXISTS,
   })
-  create(@Body() createProductDto: ProductCommand): Promise<ProductResource> {
-    return this.productService.create(createProductDto);
+  create(
+    @Request() { user }: RequestInterface,
+    @Body() createProductDto: ProductCommand,
+  ): Promise<boolean> {
+    return this.productService.create(user.id, createProductDto);
   }
 
   @Get('/categories/:id')
@@ -112,6 +119,8 @@ export class ProductController {
   }
 
   @Put('/:id')
+  @UseGuards(JwtAccessGuard)
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Update a product',
     description: 'Update a product using its id',
@@ -126,10 +135,11 @@ export class ProductController {
     localCode: ExceptionLocalCode.PRODUCT_NOT_FOUND,
   })
   update(
+    @Request() { user }: RequestInterface,
     @Param() { id }: IdParamDto,
     @Body() productDto: UpdateProductCommand,
   ): Promise<boolean> {
-    return this.productService.update(id, productDto);
+    return this.productService.update(user.id, id, productDto);
   }
 
   @Delete('/:id')
@@ -148,7 +158,10 @@ export class ProductController {
   })
   @UseGuards(JwtAccessGuard)
   @ApiBearerAuth()
-  delete(@Param() { id }: IdParamDto): Promise<boolean> {
-    return this.productService.delete(id);
+  delete(
+    @Request() { user }: RequestInterface,
+    @Param() { id }: IdParamDto,
+  ): Promise<boolean> {
+    return this.productService.delete(user.id, id);
   }
 }

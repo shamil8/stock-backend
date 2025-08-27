@@ -1,23 +1,47 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+import {
+  ProductHistoryAction,
+  ProductHistoryType,
+} from '../../enums/product-history.enum';
+
 export class HistoryResource {
-  @ApiProperty({
-    example: 'LDQ39UE45V4B',
-    description: 'The id of the product',
-    required: false,
-  })
-  productId!: string;
+  @ApiProperty({ description: 'ID of the history record', example: 'HIS123' })
+  id!: string;
 
   @ApiProperty({
-    example: 'ZNOH4738HITA',
-    description: 'The id of the user',
+    description: 'Action performed',
+    example: ProductHistoryAction.STOCK_IN,
+    enum: ProductHistoryAction,
+  })
+  action!: ProductHistoryAction;
+
+  @ApiProperty({
+    description: 'Type of entity',
+    example: ProductHistoryType.PRODUCT,
+    enum: ProductHistoryType,
+  })
+  entityType!: ProductHistoryType;
+
+  @ApiProperty({
+    description: 'Optional description or notes',
+    example: 'Added 10 units to stock',
     required: false,
   })
-  targetId?: string;
-  @ApiProperty({
-    example: -12,
-  })
-  diff!: number;
-
   description?: string;
+
+  @ApiProperty({
+    description: 'ID of the user who performed the action',
+    example: 'USR123',
+  })
+  userId!: string;
+
+  @ApiProperty({ description: 'Product ID', example: 'PROD123' })
+  productId?: string;
+
+  @ApiProperty({
+    description: 'Optional details in JSON format',
+    required: false,
+  })
+  details?: any;
 }

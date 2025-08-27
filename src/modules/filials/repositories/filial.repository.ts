@@ -37,4 +37,21 @@ export class FilialRepository {
   getAllFilials() {
     return this.filialsRepository.createQueryBuilder().getMany();
   }
+
+  async getBiIdOrThrow(id: string) {
+    const filial = await this.filialsRepository
+      .createQueryBuilder('f')
+      .where('f.id = :id', { id })
+      .getOne();
+
+    if (filial) {
+      return filial;
+    }
+
+    throw new AppHttpException(
+      ExceptionMessage.FILIAL_NOT_FOUND,
+      HttpStatus.NOT_FOUND,
+      ExceptionLocalCode.FILIAL_NOT_FOUND,
+    );
+  }
 }

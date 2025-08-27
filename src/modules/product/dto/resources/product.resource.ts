@@ -1,13 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {} from 'class-validator';
 
-export class ProductResource {
-  @ApiProperty({
-    example: 'EFE123',
-    description: 'Product ID',
-  })
-  id!: string;
+import { ProductStatus } from '../../enums/product-status.enum';
 
+export class ProductResource {
   @ApiProperty({ description: 'Name of the product' })
   name!: string;
 
@@ -63,7 +59,7 @@ export class ProductResource {
     required: false,
     default: 'Out of stock',
   })
-  status?: string;
+  status?: ProductStatus;
 
   @ApiProperty({ description: 'Category ID of the product' })
   categoryId!: string;

@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
+import { ProductStatus } from '../../enums/product-status.enum';
+
 export class UpdateProductCommand {
   @ApiProperty({ description: 'Name of the product' })
   @IsString()
@@ -76,7 +78,7 @@ export class UpdateProductCommand {
   })
   @IsString()
   @IsOptional()
-  status?: string;
+  status?: ProductStatus;
 
   @ApiProperty({ description: 'Category ID of the product' })
   @IsString()

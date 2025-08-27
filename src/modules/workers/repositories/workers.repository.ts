@@ -58,6 +58,25 @@ export class WorkersRepository {
     return this.toWorkerResource(worker);
   }
 
+  async findByAccountIdOrThrow(id: string): Promise<WorkersResource> {
+    const worker = await this.workersRepository
+      .createQueryBuilder('w')
+      .leftJoin('w.account', 'ac')
+      .select(['w.id'])
+      .where('ac.id = :id', { id })
+      .getOne();
+
+    if (!worker) {
+      throw new AppHttpException(
+        ExceptionMessage.WORKER_NOT_FOUND,
+        HttpStatus.NOT_FOUND,
+        ExceptionLocalCode.WORKER_NOT_FOUND,
+      );
+    }
+
+    return this.toWorkerResource(worker);
+  }
+
   async add(command: WorkersCommand): Promise<boolean> {
     const account = await this.userService.findUserById(command.accountId);
 

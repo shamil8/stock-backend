@@ -1,7 +1,8 @@
-export enum StockMovemantsTypeEnum {
+export enum StockMovemantsType {
   STOCK_IN = 'Stock In',
   STOCK_OUT = 'Stock Out',
   ADJUSTMENT = 'Adjustment',
+  TRANSFER = 'Transfer',
 }
 
 export enum StockMovemantsReasonEnum {

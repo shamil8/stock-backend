@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QueryRunner, Repository } from 'typeorm';
+import { DeepPartial, QueryRunner, Repository } from 'typeorm';
 
 import { ProductHistoryEntity } from '../entities/productHistory.entity';
 
@@ -14,21 +14,12 @@ export class HistoryRepository {
   /** Create **/
   async create(
     userId: string,
-    diff: number,
-    productId: string,
+    command: DeepPartial<ProductHistoryEntity>,
     queryRunner?: QueryRunner,
-  ): Promise<ProductHistoryEntity> {
-    const description =
-      diff > 0
-        ? `Added ${diff} units to the product count`
-        : `Reduced ${Math.abs(diff)} units from the product count`;
+  ): Promise<DeepPartial<ProductHistoryEntity>> {
+    command.userId = userId;
 
-    const history = this.historyRepository.create({
-      diff,
-      description,
-      userId,
-      productId,
-    });
+    const history = await this.historyRepository.create(command);
 
     await this.historyRepository
       .createQueryBuilder('races', queryRunner)
@@ -38,7 +29,7 @@ export class HistoryRepository {
       .values(history)
       .execute();
 
-    return history;
+    return command;
   }
 
   async getAllHistory(): Promise<ProductHistoryEntity[]> {

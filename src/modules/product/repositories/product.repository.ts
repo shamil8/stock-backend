@@ -20,21 +20,33 @@ export class ProductRepository {
     private readonly categoryRepository: CategoryRepository,
   ) {}
 
-  async create(command: ProductCommand): Promise<ProductResource> {
+  async create(
+    command: ProductCommand,
+    queryRunner: QueryRunner,
+  ): Promise<boolean> {
     const category = await this.categoryRepository.findByIdOrFail(
       command.categoryId,
     );
 
     const product = this.productRepository.create({ ...command, category });
 
-    return await this.productRepository.save(product);
+    await this.productRepository
+      .createQueryBuilder('p', queryRunner)
+      .useTransaction(!!queryRunner)
+      .insert()
+      .into(ProductEntity)
+      .values(product)
+      .execute();
+
+    return true;
   }
 
   async getAll(): Promise<ProductResource[]> {
     return await this.productRepository.createQueryBuilder().getMany();
   }
 
-  async findOne(id: string): Promise<ProductResource> {
+  async findById(id: string): Promise<ProductResource> {
+    console.log('findinnnngggfff');
     const product = await this.productRepository
       .createQueryBuilder('p')
       .where('p.id = :id', { id })
@@ -43,6 +55,8 @@ export class ProductRepository {
     if (product) {
       return product;
     }
+
+    console.log('121121212');
 
     throw new AppHttpException(
       ExceptionMessage.PRODUCT_NOT_FOUND,
@@ -80,7 +94,9 @@ export class ProductRepository {
     command: UpdateProductCommand,
     queryRunner?: QueryRunner,
   ): Promise<boolean> {
-    await this.findOne(id);
+    await this.findById(id);
+
+    console.log('findddd');
 
     await this.productRepository
       .createQueryBuilder('p', queryRunner)
@@ -94,6 +110,8 @@ export class ProductRepository {
   }
 
   async delete(id: string, queryRunner?: QueryRunner): Promise<boolean> {
+    await this.findById(id);
+
     await this.productRepository
       .createQueryBuilder('c', queryRunner)
       .useTransaction(!!queryRunner)

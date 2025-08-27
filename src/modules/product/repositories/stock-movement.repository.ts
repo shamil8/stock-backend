@@ -1,67 +1,104 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QueryRunnerService } from '@app/database/services/query-runner.service';
 import { DeepPartial, QueryRunner, Repository } from 'typeorm';
 
-import { StockInCommand } from '../dto/command/stock-in.command';
+import { StockMovementResource } from '../dto/resources/movement.stock.resource';
 import { StockMovementEntity } from '../entities/stock-movement.entity';
-import { StockMovemantsTypeEnum } from '../enums/stock-movemants.enum';
-import { ProductRepository } from './product.repository';
+import { StockMovemantsType } from '../enums/stock-movemants.enum';
 
 @Injectable()
 export class StockMovementRepository {
   constructor(
     @InjectRepository(StockMovementEntity)
     private readonly stockMovementRepository: Repository<StockMovementEntity>,
-    private readonly productRepository: ProductRepository,
-    private readonly queryRunnerService: QueryRunnerService,
   ) {}
 
   async stockIn(
     productId: string,
-    command: StockInCommand,
+    command: DeepPartial<StockMovementEntity>,
     queryRunner?: QueryRunner,
-  ) {
-    const movement = this.stockMovementRepository.create({
-      productId: productId,
-      type: StockMovemantsTypeEnum.STOCK_IN,
+  ): Promise<boolean> {
+    const movement: DeepPartial<StockMovementEntity> = {
+      productId,
+      userId: command.userId,
+      filialId: command.filialId,
+      type: StockMovemantsType.STOCK_IN,
       quantity: command.quantity,
+      previousQuantity: command.previousQuantity,
+      newQuantity: command.newQuantity,
       reason: command.reason,
-      filialId: command.filial,
       party: command.party,
       partyType: command.partyType,
-    } as DeepPartial<StockMovementEntity>);
+      reference: `${command.party?.toUpperCase()}-${Date.now()}`,
+      notes: command.notes,
+    };
 
-    return await this.stockMovementRepository
+    const insert = this.stockMovementRepository.create(movement);
+
+    await this.stockMovementRepository
       .createQueryBuilder('s', queryRunner)
       .useTransaction(!!queryRunner)
       .insert()
       .into(StockMovementEntity)
-      .values(movement)
+      .values(insert)
       .execute();
+
+    return true;
   }
 
   async stockOut(
     productId: string,
-    command: StockInCommand,
+    command: DeepPartial<StockMovementEntity>,
     queryRunner?: QueryRunner,
-  ) {
-    const movement = this.stockMovementRepository.create({
-      productId: productId,
-      type: StockMovemantsTypeEnum.STOCK_OUT,
+  ): Promise<boolean> {
+    const movement: DeepPartial<StockMovementEntity> = {
+      productId,
+      userId: command.userId,
+      filialId: command.filialId,
+      type: StockMovemantsType.STOCK_OUT,
       quantity: command.quantity,
+      previousQuantity: command.previousQuantity,
+      newQuantity: command.newQuantity,
       reason: command.reason,
-      filialId: command.filial,
       party: command.party,
       partyType: command.partyType,
-    });
+      reference: `${command.party?.toUpperCase()}-${Date.now()}`,
+      notes: command.notes,
+    };
 
-    return await this.stockMovementRepository
+    const insert = this.stockMovementRepository.create(movement);
+
+    await this.stockMovementRepository
       .createQueryBuilder('c', queryRunner)
       .useTransaction(!!queryRunner)
       .insert()
       .into(StockMovementEntity)
-      .values(movement)
+      .values(insert)
       .execute();
+
+    return true;
+  }
+
+  async getAll(): Promise<StockMovementResource[]> {
+    const movements = await this.stockMovementRepository
+      .createQueryBuilder('sm')
+      .leftJoinAndSelect('sm.product', 'pr')
+      .leftJoinAndSelect('sm.filial', 'fl')
+      .leftJoinAndSelect('sm.user', 'us')
+      .select([
+        'sm.createdAt as createdAt',
+        'pr.name as productName',
+        'sm.type as type',
+        'fl.name as filialName',
+        'sm.quantity as quantity',
+        'sm.partyType as partyType',
+        'us.firstName as userName',
+        'sm.reference as reference',
+        'sm.previousQuantity as previousQuantity',
+        'sm.newQuantity as newQuantity',
+      ])
+      .getRawMany();
+
+    return movements;
   }
 }

@@ -26,8 +26,8 @@ export class HistoriesController {
   //   type: HistoryResource,
   //   description: 'Successfully created history',
   // })
-  // @UseGuards(JwtAccessGuard)
-  // @ApiBearerAuth()
+  // // @UseGuards(JwtAccessGuard)
+  // // @ApiBearerAuth()
   // history(
   //   @Request() { user }: RequestInterface,
   //   @Body() dto: HistoryCommand,
