@@ -1,8 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
-import { ProductStatus } from '../../enums/product-status.enum';
-
 export class ProductCommand {
   @ApiProperty({ example: 'iphone 13 pro', description: 'Name of the product' })
   @IsString()
@@ -65,7 +63,11 @@ export class ProductCommand {
   @IsNotEmpty()
   sellingPrice!: number;
 
-  @ApiProperty({ description: 'Supplier of the product', required: false })
+  @ApiProperty({
+    example: 'Siyoma',
+    description: 'Supplier of the product',
+    required: false,
+  })
   @IsString()
   @IsOptional()
   supplier!: string;

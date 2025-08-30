@@ -53,7 +53,7 @@ export class ProductController {
   create(
     @Request() { user }: RequestInterface,
     @Body() createProductDto: ProductCommand,
-  ): Promise<boolean> {
+  ): Promise<ProductResource> {
     return this.productService.create(user.id, createProductDto);
   }
 
@@ -66,7 +66,9 @@ export class ProductController {
     type: ProductResource,
     description: 'Got a list of products by their category',
   })
-  findProductsByCategory(@Param() { id }: IdParamDto) {
+  findProductsByCategory(
+    @Param() { id }: IdParamDto,
+  ): Promise<ProductResource[]> {
     return this.productService.findProductsByCategory(id);
   }
 
@@ -79,7 +81,7 @@ export class ProductController {
     type: ProductResource,
     description: 'Got a list of products',
   })
-  getAll() {
+  getAll(): Promise<ProductResource[]> {
     return this.productService.getAll();
   }
 
@@ -102,19 +104,15 @@ export class ProductController {
     description: 'Get a product by its id',
   })
   findOne(@Param() { id }: IdParamDto): Promise<ProductResource> {
-    console.log('iddddd:', id);
-
     return this.productService.findOne(id);
   }
 
   @Get('filial/:productId')
   @ApiOperation({
     summary: 'Get count of products in filials',
-    description: 'Get a list of count of product in filials .',
+    description: 'Get a list of count of product in filials.',
   })
   getFilialByProduct(@Param('productId') id: string) {
-    console.log('iddddd:', id);
-
     return this.productService.getFilialByProduct(id);
   }
 

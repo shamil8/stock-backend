@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { QueryRunnerService } from '@app/database/services/query-runner.service';
-import e from 'express';
 
 import { CategoryRepository } from '../../category/repositories/category.repository';
 import { FilialsProductsRepository } from '../../filials/repositories/filials-products.repository';
@@ -25,31 +24,20 @@ export class ProductService {
     private readonly queryRunnerService: QueryRunnerService,
   ) {}
 
-  async create(userId: string, data: ProductCommand): Promise<boolean> {
+  async create(userId: string, data: ProductCommand): Promise<ProductResource> {
     const category = await this.categoryRepository.findById(data.name);
 
-    const queryRunner = await this.queryRunnerService.create();
+    const create = await this.productRepository.create(data);
 
-    try {
-      await this.productRepository.create(data, queryRunner);
+    await this.historyRepository.create(userId, {
+      action: ProductHistoryAction.CREATE,
+      entityType: ProductHistoryType.PRODUCT,
+      description: `Created product ${data.name} to stock`,
+      userId: userId,
+      details: { category: category, brand: data.brand },
+    });
 
-      await this.historyRepository.create(userId, {
-        action: ProductHistoryAction.CREATE,
-        entityType: ProductHistoryType.PRODUCT,
-        description: `Created product ${data.name} to stock`,
-        userId: userId,
-        details: { category: category, brand: data.brand },
-      }),
-        queryRunner;
-
-      await this.queryRunnerService.finish(queryRunner);
-
-      return true;
-    } catch (err: any) {
-      await this.queryRunnerService.rollback(queryRunner);
-
-      return err;
-    }
+    return create;
   }
 
   async findOne(id: string): Promise<ProductResource> {
@@ -82,52 +70,30 @@ export class ProductService {
       userId: userId,
     };
 
-    const queryRunner = await this.queryRunnerService.create();
+    await this.productRepository.update(id, command);
 
-    try {
-      console.log('1111uuuppp');
-      await this.productRepository.update(id, command);
+    await this.historyRepository.create(userId, historyCommand);
 
-      console.log('afffttteerrr upp');
-      await this.historyRepository.create(userId, historyCommand);
-
-      await this.queryRunnerService.finish(queryRunner);
-
-      return true;
-    } catch (err: any) {
-      await this.queryRunnerService.rollback(queryRunner);
-
-      return false;
-    }
+    return true;
   }
 
   async delete(userId: string, id: string): Promise<boolean> {
     const product = await this.productRepository.findById(id);
 
-    const queryRunner = await this.queryRunnerService.create();
+    const add = await this.productRepository.delete(id);
 
-    try {
-      await this.historyRepository.create(userId, {
-        action: ProductHistoryAction.DELETE,
-        entityType: ProductHistoryType.PRODUCT,
-        description: `Deleted product ${product.name} from stock`,
-        userId: userId,
-        details: {},
-      });
+    await this.historyRepository.create(userId, {
+      action: ProductHistoryAction.DELETE,
+      entityType: ProductHistoryType.PRODUCT,
+      description: `Deleted product ${product.name} from stock`,
+      userId: userId,
+      details: {},
+    });
 
-      return await this.productRepository.delete(id);
-
-      await this.queryRunnerService.finish(queryRunner);
-    } catch (err: any) {
-      await this.queryRunnerService.rollback(queryRunner);
-
-      return false;
-    }
+    return add;
   }
 
   async getFilialByProduct(productId: string) {
-    console.log('rpodudufdhfa', productId);
-
     return this.filialsProductsRepository.getFilialByProduct(productId);
   }
 }

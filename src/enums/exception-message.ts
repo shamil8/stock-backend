@@ -32,8 +32,20 @@ export enum ExceptionMessage {
   // product
   PRODUCT_NOT_FOUND = 'Product not found',
   PRODUCT_EXISTS = 'Product already exists',
+  PRODUCT_NOT_ENOUGH = 'Product not enough',
 
   // product history
   PRODUCT_HISTORY_NOT_CREATED = 'Product history not created',
   INSUFFICIENT_COUNT = 'Insufficient product count',
+
+  // client
+  CLIENT_NOT_FOUND = 'Client not found',
+  CLIENT_ALREADY_EXISTS = 'Client already exists',
+
+  // filials
+  FILIAL_ALREADY_EXISTS = 'Filial already exists',
+  FILIAL_NOT_FOUND = 'Filial not found',
+
+  // worker
+  WORKER_NOT_FOUND = 'Worker not found',
 }

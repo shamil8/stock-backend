@@ -152,9 +152,9 @@ export class StockMovementService {
 
     if (product.count < command.quantity) {
       throw new AppHttpException(
-        ExceptionMessage.PRODUCT_NOT_ENOUGHT,
+        ExceptionMessage.PRODUCT_NOT_ENOUGH,
         HttpStatus.BAD_REQUEST,
-        ExceptionLocalCode.PRODUCT_NOT_ENOUGHT,
+        ExceptionLocalCode.PRODUCT_NOT_ENOUGH,
       );
     }
 

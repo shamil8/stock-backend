@@ -27,7 +27,7 @@ export class ProductEntity extends BaseEntity {
   @Column({ type: 'int', nullable: false })
   maxStock!: number;
 
-  @Column({ nullable: true })
+  @Column({ type: 'float', nullable: true })
   weight?: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
@@ -54,7 +54,7 @@ export class ProductEntity extends BaseEntity {
   @Column({ default: 'Out of stock', nullable: true })
   status?: ProductStatus;
 
-  @Column()
+  @Column({ nullable: true })
   categoryId!: string;
 
   @ManyToOne(() => CategoryEntity, (category) => category.product, {

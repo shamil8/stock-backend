@@ -3,7 +3,6 @@ import { Column, Entity, ManyToOne } from 'typeorm';
 
 import { FilialsEntity } from '../../filials/entities/filials.entity';
 import { UserEntity } from '../../users/entities/user.entity';
-import { WorkersEntity } from '../../workers/entities/workers.entity';
 import {
   StockMovemantsFromEnum,
   StockMovemantsType,
@@ -12,10 +11,12 @@ import { ProductEntity } from './product.entity';
 
 @Entity({ schema: 'stock', name: 'stock_movements' })
 export class StockMovementEntity extends BaseEntity {
-  @Column()
+  @Column({ nullable: true })
   productId!: string;
 
-  @ManyToOne(() => ProductEntity, (product) => product.movements)
+  @ManyToOne(() => ProductEntity, (product) => product.movements, {
+    onDelete: 'SET NULL',
+  })
   product!: ProductEntity;
 
   @Column()
@@ -30,10 +31,10 @@ export class StockMovementEntity extends BaseEntity {
   @Column({ nullable: true })
   notes?: string;
 
-  @Column()
+  @Column({ nullable: true })
   userId!: string;
 
-  @ManyToOne(() => UserEntity, (w) => w.movements)
+  @ManyToOne(() => UserEntity, (w) => w.movements, { onDelete: 'SET NULL' })
   user!: UserEntity;
 
   @Column({ type: 'float' })
@@ -42,10 +43,12 @@ export class StockMovementEntity extends BaseEntity {
   @Column({ type: 'float' })
   newQuantity!: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   filialId!: string;
 
-  @ManyToOne(() => FilialsEntity, (fl) => fl.movements)
+  @ManyToOne(() => FilialsEntity, (fl) => fl.movements, {
+    onDelete: 'SET NULL',
+  })
   filial!: FilialsEntity;
 
   @Column()

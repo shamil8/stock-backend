@@ -11,8 +11,6 @@ import { FilialsEntity } from '../filials/entities/filials.entity';
 import { FilialsProductsEntity } from '../filials/entities/filials-products.entity';
 import { FilialRepository } from '../filials/repositories/filial.repository';
 import { FilialsProductsRepository } from '../filials/repositories/filials-products.repository';
-import { UserEntity } from '../users/entities/user.entity';
-import { WorkersRepository } from '../workers/repositories/workers.repository';
 import { HistoriesController } from './controllers/histories.controller';
 import { ProductController } from './controllers/product.controller';
 import { StockMovementController } from './controllers/stock-movement.controller';

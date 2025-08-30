@@ -19,16 +19,20 @@ export class ProductHistoryEntity extends BaseEntity {
   @Column({ type: 'text', nullable: true })
   description?: string;
 
-  @Column()
+  @Column({ nullable: true })
   userId!: string;
 
-  @ManyToOne(() => UserEntity, (us) => us.productHistory)
+  @ManyToOne(() => UserEntity, (us) => us.productHistory, {
+    onDelete: 'SET NULL',
+  })
   user!: UserEntity;
 
   @Column({ nullable: true })
   productId?: string;
 
-  @ManyToOne(() => ProductEntity, (pr) => pr.productHistories)
+  @ManyToOne(() => ProductEntity, (pr) => pr.productHistories, {
+    onDelete: 'SET NULL',
+  })
   product?: ProductEntity;
 
   @Column({ type: 'json', nullable: true })

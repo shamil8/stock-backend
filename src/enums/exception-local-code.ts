@@ -67,8 +67,20 @@ export enum ExceptionLocalCode {
   // product
   PRODUCT_NOT_FOUND = 12900,
   PRODUCT_EXISTS,
+  PRODUCT_NOT_ENOUGH,
 
   // product history
   INSUFFICIENT_COUNT = 13000,
   PRODUCT_HISTORY_NOT_CREATED,
+
+  // client
+  CLIENT_NOT_FOUND = 13100,
+  CLIENT_ALREADY_EXISTS,
+
+  // filials
+  FILIAL_ALREADY_EXISTS = 13200,
+  FILIAL_NOT_FOUND,
+
+  // worker
+  WORKER_NOT_FOUND = 13300,
 }

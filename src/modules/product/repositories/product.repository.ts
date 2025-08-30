@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QueryRunner, Repository } from 'typeorm';
+import { QueryRunner, Repository, UpdateResult } from 'typeorm';
 
 import { ExceptionLocalCode } from '../../../enums/exception-local-code';
 import { ExceptionMessage } from '../../../enums/exception-message';
@@ -20,25 +20,12 @@ export class ProductRepository {
     private readonly categoryRepository: CategoryRepository,
   ) {}
 
-  async create(
-    command: ProductCommand,
-    queryRunner: QueryRunner,
-  ): Promise<boolean> {
-    const category = await this.categoryRepository.findByIdOrFail(
-      command.categoryId,
-    );
+  async create(command: ProductCommand) {
+    await this.categoryRepository.findByIdOrFail(command.categoryId);
 
-    const product = this.productRepository.create({ ...command, category });
+    const product = this.productRepository.create({ ...command });
 
-    await this.productRepository
-      .createQueryBuilder('p', queryRunner)
-      .useTransaction(!!queryRunner)
-      .insert()
-      .into(ProductEntity)
-      .values(product)
-      .execute();
-
-    return true;
+    return await this.productRepository.save(product);
   }
 
   async getAll(): Promise<ProductResource[]> {
@@ -93,12 +80,10 @@ export class ProductRepository {
     id: string,
     command: UpdateProductCommand,
     queryRunner?: QueryRunner,
-  ): Promise<boolean> {
+  ): Promise<UpdateResult> {
     await this.findById(id);
 
-    console.log('findddd');
-
-    await this.productRepository
+    const update = await this.productRepository
       .createQueryBuilder('p', queryRunner)
       .useTransaction(!!queryRunner)
       .update()
@@ -106,7 +91,7 @@ export class ProductRepository {
       .where('id = :id', { id })
       .execute();
 
-    return true;
+    return update;
   }
 
   async delete(id: string, queryRunner?: QueryRunner): Promise<boolean> {
