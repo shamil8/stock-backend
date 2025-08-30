@@ -7,7 +7,6 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
-  OneToOne,
 } from 'typeorm';
 
 import { FilialsEntity } from '../../filials/entities/filials.entity';
@@ -40,6 +39,9 @@ export class UserEntity extends BaseEntity {
 
   @Column({ nullable: false })
   filialsId!: string;
+
+  @Column({ nullable: true })
+  avatar?: string;
 
   @Column({ length: 3, default: LanguageCode.EN })
   langCode!: LanguageCode;

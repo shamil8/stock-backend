@@ -58,7 +58,7 @@ export class WorkersResource {
   position?: string;
 
   @ApiProperty({
-    example: UserRole.WORKER,
+    example: UserRole.EMPLOYEE,
     description: 'The role of the worker',
     enum: UserRole,
   })

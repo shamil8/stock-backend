@@ -1,7 +1,9 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { json, urlencoded } from 'express';
+import * as express from 'express';
 import helmet from 'helmet';
+import { join } from 'path';
 
 import { AppModule } from './app.module';
 import config from './config';
@@ -19,7 +21,15 @@ async function main(): Promise<void> {
   app.useGlobalInterceptors(new ResponseInterceptor());
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.setGlobalPrefix(config.routePrefix);
+  const avatarsPath = join(process.cwd(), 'uploads', 'avatars');
 
+  app.use(
+    '/api/uploads/avatars',
+    express.static(avatarsPath, {
+      index: false,
+      redirect: false,
+    }),
+  );
   /** Settings Swagger */
   swaggerConfig(app);
 

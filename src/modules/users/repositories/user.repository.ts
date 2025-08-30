@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { ExceptionLocalCode } from '../../../enums/exception-local-code';
 import { ExceptionMessage } from '../../../enums/exception-message';
 import { AppHttpException } from '../../../filters/app-http.exception';
+import { FilialRepository } from '../../filials/repositories/filial.repository';
 import { ChangeUserPasswordCommand } from '../dto/command/change-user-password.command';
 import { StoreUserCommand } from '../dto/command/store-user.command';
 import { UserListQuery } from '../dto/query/user-list.query';
@@ -19,6 +20,7 @@ export class UserRepository {
     private readonly logger: LoggerService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    private readonly filialRepository: FilialRepository,
   ) {}
 
   async findUsers(query: UserListQuery): FindAndCountType<UserEntity> {
@@ -62,6 +64,16 @@ export class UserRepository {
     );
   }
 
+  async findById(id: string) {
+    const user = await this.findByColumn('id', id);
+
+    const filialName = await this.filialRepository.getBiIdOrThrow(
+      user.filialsId,
+    );
+
+    return { ...user, filialName: filialName.name };
+  }
+
   async storeUser(command: StoreUserCommand): Promise<UserEntity> {
     const user = this.userRepository.create({
       email: command.email,
@@ -79,6 +91,16 @@ export class UserRepository {
 
   getUsernameFromEmail(email: string): string {
     return `${email.split('@')[0]}_${getNANOID()}`;
+  }
+
+  async uploadAvatar(userId: string, fileName: string): Promise<boolean> {
+    const user = await this.findById(userId);
+
+    user.avatar = fileName;
+
+    await this.userRepository.save(user);
+
+    return true;
   }
 
   async changePassword(userId: string, command: ChangeUserPasswordCommand) {

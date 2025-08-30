@@ -61,6 +61,10 @@ export class UserService {
     return user;
   }
 
+  findById(id: string) {
+    return this.userRepository.findById(id);
+  }
+
   async createUser(command: StoreUserCommand): Promise<UserResource> {
     const hasUser = await this.findByEmail(command.email, ['id', 'password']);
 
@@ -77,12 +81,16 @@ export class UserService {
     return new UserResource(user);
   }
 
+  async uploadAvatar(userId: string, fileName: string): Promise<string> {
+    await this.userRepository.uploadAvatar(userId, fileName);
+
+    return 'http://localhost:5002/api' + fileName;
+  }
+
   changePassword(
     userId: string,
     command: ChangeUserPasswordCommand,
   ): Promise<boolean> {
-    console.log('useridddd', userId);
-
     return this.userRepository.changePassword(userId, command);
   }
 }

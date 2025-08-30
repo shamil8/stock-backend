@@ -82,8 +82,9 @@ export class UpdateClientCommand {
     description: 'The current debt of the client',
     required: true,
   })
+  @IsOptional()
   @IsNumber()
-  currentDebt!: number;
+  currentDebt?: number;
 
   @ApiProperty({
     example: 'This client will come after 2 months',

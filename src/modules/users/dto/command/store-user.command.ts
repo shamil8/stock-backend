@@ -48,11 +48,11 @@ export class StoreUserCommand extends AuthCommand {
   filialId!: string;
 
   @ApiProperty({
-    example: UserRole.WORKER,
+    example: UserRole.EMPLOYEE,
     description: 'User worker role',
   })
   @IsString()
+  @IsEnum(UserRole)
   @IsNotEmpty()
-  @MaxLength(25)
   role!: UserRole;
 }

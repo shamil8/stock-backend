@@ -3,12 +3,16 @@ import {
   Controller,
   Get,
   HttpStatus,
+  Param,
   Post,
   Put,
   Query,
   Request,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -20,8 +24,13 @@ import {
   ApiResponsePaginated,
   PageResType,
 } from '@app/crypto-utils/decorators/page-response.decorator';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
-import { authRateLimitOptions } from '../../../constants/rate-limit';
+import {
+  authRateLimitOptions,
+  rateLimitOptions,
+} from '../../../constants/rate-limit';
 import { ApiAppException } from '../../../dto/resource/app-exception.resource';
 import { ExceptionLocalCode } from '../../../enums/exception-local-code';
 import { ExceptionMessage } from '../../../enums/exception-message';
@@ -69,6 +78,53 @@ export class UserController {
   })
   createUser(@Body() command: StoreUserCommand): Promise<UserResource> {
     return this.usersService.createUser(command);
+  }
+
+  @Get(':id')
+  @ApiOperation({
+    summary: 'Get user by id',
+    description: 'Get user by id',
+  })
+  findById(@Param('id') id: string) {
+    console.log('idddddd', id);
+
+    return this.usersService.findById(id);
+  }
+
+  @Post('/avatar')
+  @UseGuards(JwtAccessGuard)
+  @ApiBearerAuth()
+  @Throttle({ defult: rateLimitOptions })
+  @ApiOperation({
+    summary: 'Update avatar',
+    description: 'Update users avatar',
+  })
+  @UseInterceptors(
+    FileInterceptor('avatar', {
+      storage: diskStorage({
+        destination: './uploads/avatars',
+        filename: (
+          req: Express.Request,
+          file: Express.Multer.File,
+          callback: (error: Error | null, filename: string) => void,
+        ) => {
+          const ext = extname(file.originalname);
+          const uniqueName = `${Date.now()}-${Math.round(
+            Math.random() * 1e9,
+          )}${ext}`;
+
+          callback(null, uniqueName);
+        },
+      }),
+    }),
+  )
+  async uploadAvatar(
+    @Request() { user }: RequestInterface,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const filePath = `/uploads/avatars/${file.filename}`;
+
+    return this.usersService.uploadAvatar(user.id, filePath);
   }
 
   @Put('password')

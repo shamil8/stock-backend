@@ -35,6 +35,9 @@ export class ClientsEntity extends BaseEntity {
   @Column({ default: 0 })
   totalPurchases!: number;
 
+  @Column({ nullable: true })
+  lastPurchase?: Date;
+
   @Column()
   notes?: string;
 }

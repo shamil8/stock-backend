@@ -66,14 +66,6 @@ export class ClientsCommand {
   creditLimit!: number;
 
   @ApiProperty({
-    example: 100,
-    description: 'The current debt of the client',
-    required: true,
-  })
-  @IsNumber()
-  currentDebt!: number;
-
-  @ApiProperty({
     example: 'This client will come after 2 months',
     description: 'Any description for the client',
   })

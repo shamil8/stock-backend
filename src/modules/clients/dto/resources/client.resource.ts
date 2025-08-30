@@ -49,6 +49,20 @@ export class ClientsResource {
   currentDebt?: number;
 
   @ApiProperty({
+    example: 12,
+    description: 'The total purchases of the client',
+    required: true,
+  })
+  totalPurchases!: number;
+
+  @ApiProperty({
+    example: new Date(),
+    description: 'The date of the last purchase',
+    required: true,
+  })
+  lastPurchase?: Date;
+
+  @ApiProperty({
     example: 'This client will come after 2 months',
     description: 'Any description for the client',
   })

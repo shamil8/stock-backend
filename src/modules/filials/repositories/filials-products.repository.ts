@@ -48,8 +48,6 @@ export class FilialsProductsRepository {
   ) {
     const inc = await this.findOne(filialId, productId);
 
-    console.log(!!inc, 'incccc');
-
     const setCount = type === 'in' ? '+' : '-';
 
     if (inc) {
@@ -68,7 +66,6 @@ export class FilialsProductsRepository {
   }
 
   async getProductsByFilial(filialId: string) {
-    console.log('filialllll, ', filialId);
     const products = await this.filialsProductsRepository
       .createQueryBuilder('fp')
       .leftJoinAndSelect('fp.product', 'p')
@@ -80,7 +77,6 @@ export class FilialsProductsRepository {
   }
 
   async getFilialByProduct(productId: string) {
-    console.log('filialllll, ', productId);
     const filials = await this.filialsProductsRepository
       .createQueryBuilder('fp')
       .leftJoinAndSelect('fp.filial', 'f')
