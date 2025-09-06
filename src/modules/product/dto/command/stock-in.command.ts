@@ -9,8 +9,8 @@ import {
 } from 'class-validator';
 
 import {
-  StockMovemantsFromEnum,
-  StockMovemantsReasonEnum,
+  StockMovemants,
+  StockMovemantsReason,
 } from '../../enums/stock-movemants.enum';
 
 export class StockInCommand {
@@ -25,14 +25,13 @@ export class StockInCommand {
   quantity!: number;
 
   @ApiProperty({
-    example: StockMovemantsReasonEnum.PURCHASE,
+    example: StockMovemantsReason.PURCHASE,
     description: 'Reason for stock addition',
     required: true,
   })
-  @IsEnum(StockMovemantsReasonEnum)
   @IsString()
   @IsNotEmpty()
-  reason!: StockMovemantsReasonEnum;
+  reason!: StockMovemantsReason;
 
   @ApiProperty({
     example: '5C65A38HDOT6',
@@ -44,14 +43,14 @@ export class StockInCommand {
   filialId!: string;
 
   @ApiProperty({
-    example: StockMovemantsFromEnum.SUPPLIER,
+    example: StockMovemants.SUPPLIER,
     description: 'The source name of stock',
     required: true,
   })
   @IsNotEmpty()
   @IsString()
-  @IsEnum(StockMovemantsFromEnum)
-  party!: StockMovemantsFromEnum;
+  @IsEnum(StockMovemants)
+  party!: StockMovemants;
 
   @ApiProperty({
     example: 'Apple Company',
@@ -59,8 +58,7 @@ export class StockInCommand {
     required: false,
   })
   @IsString()
-  @IsOptional()
-  partyType?: string;
+  partyType!: string;
 
   @ApiProperty({
     example: 'Batch #2025, expires in 1 year',

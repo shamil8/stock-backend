@@ -4,7 +4,7 @@ import { Column, Entity, ManyToOne } from 'typeorm';
 import { FilialsEntity } from '../../filials/entities/filials.entity';
 import { UserEntity } from '../../users/entities/user.entity';
 import {
-  StockMovemantsFromEnum,
+  StockMovemants,
   StockMovemantsType,
 } from '../enums/stock-movemants.enum';
 import { ProductEntity } from './product.entity';
@@ -52,9 +52,8 @@ export class StockMovementEntity extends BaseEntity {
   filial!: FilialsEntity;
 
   @Column()
-  party!: StockMovemantsFromEnum;
+  party!: StockMovemants;
 
-  // TODO: make from type
   @Column()
   partyType?: string;
 

@@ -51,7 +51,7 @@ export class ProductEntity extends BaseEntity {
   @Column({ type: 'date', nullable: true })
   expiryDate?: Date;
 
-  @Column({ default: 'Out of stock', nullable: true })
+  @Column({ default: ProductStatus.OUT_OF_STOCK, nullable: false })
   status?: ProductStatus;
 
   @Column({ nullable: true })

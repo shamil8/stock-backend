@@ -91,7 +91,7 @@ export class UserController {
     return this.usersService.findById(id);
   }
 
-  @Post('/avatar')
+  @Put('/avatar')
   @UseGuards(JwtAccessGuard)
   @ApiBearerAuth()
   @Throttle({ defult: rateLimitOptions })

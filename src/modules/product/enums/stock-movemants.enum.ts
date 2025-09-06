@@ -5,14 +5,18 @@ export enum StockMovemantsType {
   TRANSFER = 'Transfer',
 }
 
-export enum StockMovemantsReasonEnum {
+export enum StockMovemantsReason {
   PURCHASE = 'Purchase',
   TRANSFER = 'Transfer',
   RETURN = 'Return',
+  SALE = 'Sale',
+  DISCARDED = 'Discarded',
 }
 
-export enum StockMovemantsFromEnum {
+export enum StockMovemants {
   SUPPLIER = 'Supplier',
   OTHER_FILIAL = 'Other Filial',
   RETURN_FROM_CUSTOMER = 'Return from Customer',
+  CLIENT = 'Client',
+  DISCARDED = 'Discarded',
 }

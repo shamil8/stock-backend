@@ -1,7 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryRunner, Repository } from 'typeorm';
 
+import { ExceptionLocalCode } from '../../../enums/exception-local-code';
+import { ExceptionMessage } from '../../../enums/exception-message';
+import { AppHttpException } from '../../../filters/app-http.exception';
 import { FilialsProductsEntity } from '../entities/filials-products.entity';
 
 @Injectable()
@@ -50,6 +53,18 @@ export class FilialsProductsRepository {
 
     const setCount = type === 'in' ? '+' : '-';
 
+    if ((type = 'out')) {
+      const productCount = await this.getProductCount(filialId, productId);
+
+      if (productCount < count) {
+        throw new AppHttpException(
+          ExceptionMessage.PRODUCT_NOT_ENOUGH,
+          HttpStatus.BAD_REQUEST,
+          ExceptionLocalCode.PRODUCT_NOT_ENOUGH,
+        );
+      }
+    }
+
     if (inc) {
       return await this.filialsProductsRepository
         .createQueryBuilder('c', queryRunner)
@@ -76,14 +91,26 @@ export class FilialsProductsRepository {
     return products;
   }
 
-  async getFilialByProduct(productId: string) {
+  async getFilialsByProduct(productId: string) {
     const filials = await this.filialsProductsRepository
       .createQueryBuilder('fp')
       .leftJoinAndSelect('fp.filial', 'f')
-      .select(['fp.id', 'fp.count', 'f.id', 'f.name'])
+      .select(['fp.id', 'fp.count', 'f.id', 'f.name', 'f.address'])
       .where('fp.productId = :productId', { productId })
       .getMany();
 
     return filials;
+  }
+
+  async getProductCount(filialId: string, productId: string): Promise<number> {
+    const result = await this.filialsProductsRepository
+      .createQueryBuilder('fp')
+      .leftJoinAndSelect('fp.product', 'p')
+      .select(['fp.count'])
+      .where('fp.filialId = :filialId', { filialId })
+      .andWhere('fp.productId = :productId', { productId })
+      .getOne();
+
+    return Number(result?.count);
   }
 }

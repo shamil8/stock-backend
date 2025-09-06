@@ -81,7 +81,8 @@ export class UpdateProductCommand {
   status?: ProductStatus;
 
   @ApiProperty({ description: 'Category ID of the product' })
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
-  categoryId!: string;
+  categoryId?: string;
 }

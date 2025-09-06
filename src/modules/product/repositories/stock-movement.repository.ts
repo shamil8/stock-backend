@@ -17,7 +17,7 @@ export class StockMovementRepository {
     productId: string,
     command: DeepPartial<StockMovementEntity>,
     queryRunner?: QueryRunner,
-  ): Promise<boolean> {
+  ) {
     const movement: DeepPartial<StockMovementEntity> = {
       productId,
       userId: command.userId,
@@ -35,22 +35,23 @@ export class StockMovementRepository {
 
     const insert = this.stockMovementRepository.create(movement);
 
-    await this.stockMovementRepository
+    const save = await this.stockMovementRepository
       .createQueryBuilder('s', queryRunner)
       .useTransaction(!!queryRunner)
       .insert()
       .into(StockMovementEntity)
       .values(insert)
+      .returning('*')
       .execute();
 
-    return true;
+    return save;
   }
 
   async stockOut(
     productId: string,
     command: DeepPartial<StockMovementEntity>,
     queryRunner?: QueryRunner,
-  ): Promise<boolean> {
+  ) {
     const movement: DeepPartial<StockMovementEntity> = {
       productId,
       userId: command.userId,
@@ -68,15 +69,16 @@ export class StockMovementRepository {
 
     const insert = this.stockMovementRepository.create(movement);
 
-    await this.stockMovementRepository
+    const save = await this.stockMovementRepository
       .createQueryBuilder('c', queryRunner)
       .useTransaction(!!queryRunner)
       .insert()
       .into(StockMovementEntity)
       .values(insert)
+      .returning('*')
       .execute();
 
-    return true;
+    return save;
   }
 
   async getAll(): Promise<StockMovementResource[]> {

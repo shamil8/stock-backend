@@ -3,6 +3,23 @@ import {} from 'class-validator';
 
 import { ProductStatus } from '../../enums/product-status.enum';
 
+export class ProductStoreResource {
+  @ApiProperty({ example: '5C65A38HDOT6', description: 'ID of the filial' })
+  filialId!: string;
+
+  @ApiProperty({ example: 'Filial 1', description: 'Name of the filial' })
+  filialName!: string;
+
+  @ApiProperty({ example: '123 Street', description: 'Address of the filial' })
+  filialAddress!: string;
+
+  @ApiProperty({
+    example: 11,
+    description: 'Count of the product in this filial',
+  })
+  count!: number;
+}
+
 export class ProductResource {
   @ApiProperty({ description: 'Name of the product' })
   name!: string;
@@ -63,4 +80,9 @@ export class ProductResource {
 
   @ApiProperty({ description: 'Category ID of the product' })
   categoryId!: string;
+
+  @ApiProperty({
+    description: 'The list of in what filial and how many (much) is product',
+  })
+  productStore?: ProductStoreResource[];
 }

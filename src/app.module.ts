@@ -9,6 +9,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { CategoryModule } from './modules/category/category.module';
 import { ClientsModule } from './modules/clients/clients.module';
 import { FilialsModule } from './modules/filials/filials.module';
+import { FinanceModule } from './modules/finance/n.module';
 import { ProductModule } from './modules/product/product.module';
 import { SystemModule } from './modules/system/system.module';
 import { UserModule } from './modules/users/user.module';
@@ -37,6 +38,7 @@ import { WorkersModule } from './modules/workers/workers.module';
     ClientsModule,
     WorkersModule,
     FilialsModule,
+    FinanceModule,
   ],
 })
 export class AppModule {}

@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 
 import { FilialsEntity } from '../../filials/entities/filials.entity';
+import { TransactionEntity } from '../../finance/entities/transaction.entity';
 import { ProductHistoryEntity } from '../../product/entities/productHistory.entity';
 import { StockMovementEntity } from '../../product/entities/stock-movement.entity';
 import { CountryEntity } from '../../system/entities/country.entity';
@@ -51,6 +52,9 @@ export class UserEntity extends BaseEntity {
 
   @Column({ select: false })
   password!: string;
+
+  @Column({ nullable: true, type: 'timestamptz' })
+  lastLogin?: Date;
 
   @Column({ nullable: true })
   countryId?: string;
@@ -98,4 +102,7 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(() => ProductHistoryEntity, (ph) => ph.user)
   productHistory!: ProductHistoryEntity[];
+
+  @OneToMany(() => TransactionEntity, (transaction) => transaction.user)
+  transactions?: TransactionEntity[];
 }

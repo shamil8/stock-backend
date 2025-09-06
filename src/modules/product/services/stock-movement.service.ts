@@ -1,12 +1,10 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { QueryRunnerService } from '@app/database/services/query-runner.service';
 
-import { ExceptionLocalCode } from '../../../enums/exception-local-code';
-import { ExceptionMessage } from '../../../enums/exception-message';
-import { AppHttpException } from '../../../filters/app-http.exception';
 import { ClientsRepository } from '../../clients/repositories/clients.repository';
 import { FilialRepository } from '../../filials/repositories/filial.repository';
 import { FilialsProductsRepository } from '../../filials/repositories/filials-products.repository';
+import { UserService } from '../../users/services/user.service';
 import { StockInCommand } from '../dto/command/stock-in.command';
 import { StockMovementResource } from '../dto/resources/movement.stock.resource';
 import {
@@ -14,7 +12,7 @@ import {
   ProductHistoryType,
 } from '../enums/product-history.enum';
 import { ProductStatus } from '../enums/product-status.enum';
-import { StockMovemantsFromEnum } from '../enums/stock-movemants.enum';
+import { StockMovemants } from '../enums/stock-movemants.enum';
 import { HistoryRepository } from '../repositories/history.repository';
 import { ProductRepository } from '../repositories/product.repository';
 import { StockMovementRepository } from '../repositories/stock-movement.repository';
@@ -29,19 +27,26 @@ export class StockMovementService {
     private readonly clientRepository: ClientsRepository,
     private readonly producHistoryRepository: HistoryRepository,
     private readonly filialsRepository: FilialRepository,
+    private readonly userServise: UserService,
   ) {}
 
   async stockIn(
     userId: string,
     productId: string,
     command: StockInCommand,
-  ): Promise<boolean> {
+  ): Promise<StockMovementResource | boolean> {
     const product = await this.productRepository.findById(productId);
     const filial = await this.filialsRepository.getBiIdOrThrow(
       command.filialId,
     );
+    const user = await this.userServise.findUserById(userId);
 
-    const previousQuantity = product.count;
+    const productCount = await this.filialProductsRepository.getProductCount(
+      command.filialId,
+      productId,
+    );
+
+    const previousQuantity = productCount;
 
     product.count += command.quantity;
     const status =
@@ -51,28 +56,16 @@ export class StockMovementService {
 
     product.status = status;
 
-    let partyType: string = command.partyType ?? '';
-
-    if (
-      !command.partyType ||
-      command.party === StockMovemantsFromEnum.SUPPLIER
-    ) {
-      partyType = product.supplier;
-    } else if (command.party === StockMovemantsFromEnum.RETURN_FROM_CUSTOMER) {
-      await this.clientRepository.findClientByIdOrThrow(command.partyType);
-      partyType = command.partyType;
-    }
-
     const movementCommand = {
       productId,
       userId: userId,
       filialId: command.filialId,
       quantity: command.quantity,
       previousQuantity,
-      newQuantity: product.count,
+      newQuantity: productCount + command.quantity,
       reason: command.reason,
       party: command.party,
-      partyType: partyType,
+      partyType: command.partyType,
       reference: `${command.party.toUpperCase()}-${Date.now()}`,
       notes: command.notes,
     };
@@ -80,9 +73,7 @@ export class StockMovementService {
     const queryRunner = await this.queryRunnerService.create();
 
     try {
-      await this.productRepository.update(productId, product, queryRunner);
-
-      if (command.party === StockMovemantsFromEnum.OTHER_FILIAL) {
+      if (command.party === StockMovemants.OTHER_FILIAL) {
         await this.filialProductsRepository.update(
           command.partyType as string,
           productId,
@@ -99,9 +90,9 @@ export class StockMovementService {
           queryRunner,
         );
       } else if (
-        command.party === StockMovemantsFromEnum.SUPPLIER ||
+        command.party === StockMovemants.SUPPLIER ||
         // TODO: Doing returnin client
-        command.party === StockMovemantsFromEnum.RETURN_FROM_CUSTOMER
+        command.party === StockMovemants.RETURN_FROM_CUSTOMER
       ) {
         await this.filialProductsRepository.update(
           command.filialId,
@@ -110,11 +101,12 @@ export class StockMovementService {
           'in',
           queryRunner,
         );
+
+        await this.productRepository.update(productId, product, queryRunner);
       }
 
-      await this.sMovementRepository.stockIn(
+      const stockIn = await this.sMovementRepository.stockIn(
         productId,
-        // TODO: Change partyType type (! or ?) beacuose when party is Supplier, partyType = product supplier and it save avtomaticly
         movementCommand,
         queryRunner,
       );
@@ -132,11 +124,30 @@ export class StockMovementService {
 
       await this.queryRunnerService.finish(queryRunner);
 
-      return true;
+      const inserted = stockIn.raw[0];
+
+      return new StockMovementResource({
+        id: inserted.id,
+        productId: productId,
+        productName: product.name,
+        type: 'stock_in',
+        quantity: command.quantity,
+        reason: command.reason,
+        notes: command.notes,
+        performedBy: `${user.firstName} ${user.lastName}`,
+        previousQuantity,
+        date: inserted.created_at,
+        newQuantity: productCount + command.quantity,
+        storeId: command.filialId,
+        storeName: filial.name,
+        party: command.party,
+        partyType: command.partyType,
+        reference: inserted.reference,
+      });
     } catch (error: any) {
       await this.queryRunnerService.rollback(queryRunner);
 
-      return false;
+      return error;
     }
   }
 
@@ -144,21 +155,19 @@ export class StockMovementService {
     userId: string,
     productId: string,
     command: StockInCommand,
-  ): Promise<boolean> {
+  ): Promise<StockMovementResource | boolean> {
     const product = await this.productRepository.findById(productId);
     const filial = await this.filialsRepository.getBiIdOrThrow(
       command.filialId,
     );
+    const user = await this.userServise.findUserById(userId);
 
-    if (product.count < command.quantity) {
-      throw new AppHttpException(
-        ExceptionMessage.PRODUCT_NOT_ENOUGH,
-        HttpStatus.BAD_REQUEST,
-        ExceptionLocalCode.PRODUCT_NOT_ENOUGH,
-      );
-    }
+    const productCount = await this.filialProductsRepository.getProductCount(
+      command.filialId,
+      productId,
+    );
 
-    const previousQuantity = product.count;
+    const previousQuantity = productCount;
 
     product.count -= command.quantity;
     const status =
@@ -176,7 +185,7 @@ export class StockMovementService {
       filialId: command.filialId,
       quantity: command.quantity,
       previousQuantity,
-      newQuantity: product.count,
+      newQuantity: productCount - command.quantity,
       reason: command.reason,
       party: command.party,
       partyType: command.partyType,
@@ -187,9 +196,37 @@ export class StockMovementService {
     const queryRunner = await this.queryRunnerService.create();
 
     try {
-      await this.productRepository.update(productId, product, queryRunner);
+      if (command.party === StockMovemants.OTHER_FILIAL) {
+        await this.filialProductsRepository.update(
+          command.partyType as string,
+          productId,
+          command.quantity,
+          'in',
+          queryRunner,
+        );
 
-      await this.sMovementRepository.stockOut(
+        await this.filialProductsRepository.update(
+          command.filialId,
+          productId,
+          command.quantity,
+          'out',
+          queryRunner,
+        );
+      } else if (
+        command.party === StockMovemants.CLIENT ||
+        command.party === StockMovemants.DISCARDED
+      ) {
+        await this.filialProductsRepository.update(
+          command.filialId,
+          productId,
+          command.quantity,
+          'out',
+          queryRunner,
+        );
+        await this.productRepository.update(productId, product, queryRunner);
+      }
+
+      const stockOut = await this.sMovementRepository.stockOut(
         productId,
         movementCommand,
         queryRunner,
@@ -203,14 +240,33 @@ export class StockMovementService {
         description: `Removed 20 units ${product.name} - ${command.reason}`,
         userId: userId,
         productId,
-        details: { filialName: filial.name, supplie: product.supplier },
+        details: { filialName: filial.name, supplier: product.supplier },
       });
 
-      return true;
+      const inserted = stockOut.raw[0];
+
+      return new StockMovementResource({
+        id: inserted.id,
+        productId: productId,
+        productName: product.name,
+        type: 'stock_in',
+        quantity: command.quantity,
+        reason: command.reason,
+        notes: command.notes,
+        performedBy: `${user.firstName} ${user.lastName}`,
+        previousQuantity,
+        date: inserted.created_at,
+        newQuantity: productCount - command.quantity,
+        storeId: command.filialId,
+        storeName: filial.name,
+        party: command.party,
+        partyType: command.partyType,
+        reference: inserted.reference,
+      });
     } catch (err: any) {
       await this.queryRunnerService.rollback(queryRunner);
 
-      return false;
+      return err;
     }
   }
 

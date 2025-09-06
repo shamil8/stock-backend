@@ -29,11 +29,10 @@ export class ProductRepository {
   }
 
   async getAll(): Promise<ProductResource[]> {
-    return await this.productRepository.createQueryBuilder().getMany();
+    return await this.productRepository.createQueryBuilder('p').getMany();
   }
 
   async findById(id: string): Promise<ProductResource> {
-    console.log('findinnnngggfff');
     const product = await this.productRepository
       .createQueryBuilder('p')
       .where('p.id = :id', { id })
@@ -42,8 +41,6 @@ export class ProductRepository {
     if (product) {
       return product;
     }
-
-    console.log('121121212');
 
     throw new AppHttpException(
       ExceptionMessage.PRODUCT_NOT_FOUND,

@@ -6,7 +6,10 @@ import { FilialsProductsRepository } from '../../filials/repositories/filials-pr
 import { ProductCommand } from '../dto/command/product.command';
 import { UpdateProductCommand } from '../dto/command/update-product.command';
 import { ProductListQuery } from '../dto/query/product-list.query';
-import { ProductResource } from '../dto/resources/product.resource';
+import {
+  ProductResource,
+  ProductStoreResource,
+} from '../dto/resources/product.resource';
 import {
   ProductHistoryAction,
   ProductHistoryType,
@@ -27,6 +30,7 @@ export class ProductService {
   async create(userId: string, data: ProductCommand): Promise<ProductResource> {
     const category = await this.categoryRepository.findById(data.name);
 
+    // TODO: Check product f exists dont add!!
     const create = await this.productRepository.create(data);
 
     await this.historyRepository.create(userId, {
@@ -41,7 +45,18 @@ export class ProductService {
   }
 
   async findOne(id: string): Promise<ProductResource> {
-    return await this.productRepository.findById(id);
+    const product = await this.productRepository.findById(id);
+    const productInFilials = await this.getFilialByProduct(id);
+
+    return {
+      ...product,
+      productStore: productInFilials.map((item) => ({
+        filialId: item.filial.id,
+        filialName: item.filial.name,
+        filialAddress: item.filial.address,
+        count: item.count,
+      })) as ProductStoreResource[],
+    };
   }
 
   getAll(): Promise<ProductResource[]> {
@@ -94,6 +109,6 @@ export class ProductService {
   }
 
   async getFilialByProduct(productId: string) {
-    return this.filialsProductsRepository.getFilialByProduct(productId);
+    return this.filialsProductsRepository.getFilialsByProduct(productId);
   }
 }

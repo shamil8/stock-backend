@@ -41,6 +41,7 @@ export class AuthService {
       'id',
       'password',
       'role',
+      'lastLogin',
     ]);
 
     if (!user || !user.validatePassword(command.password)) {

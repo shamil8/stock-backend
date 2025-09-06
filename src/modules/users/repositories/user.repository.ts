@@ -71,7 +71,11 @@ export class UserRepository {
       user.filialsId,
     );
 
-    return { ...user, filialName: filialName.name };
+    return {
+      ...user,
+      filialName: filialName.name,
+      avatar: `http://localhost:5002/api${user.avatar}`,
+    };
   }
 
   async storeUser(command: StoreUserCommand): Promise<UserEntity> {

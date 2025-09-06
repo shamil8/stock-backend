@@ -8,13 +8,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
-  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { use } from 'passport';
 
 import { JwtAccessGuard } from '../../auth/guards/jwt-access.guard';
 import { RequestInterface } from '../../auth/interfaces/request.interface';
@@ -48,14 +46,14 @@ export class StockMovementController {
     description: 'Save stock in for product',
   })
   @ApiOkResponse({
-    type: Boolean,
+    type: StockMovementResource,
     description: 'Saved stock in for product successfully',
   })
   stockIn(
     @Request() { user }: RequestInterface,
     @Param('id') id: string,
     @Body() command: StockInCommand,
-  ) {
+  ): Promise<StockMovementResource | boolean> {
     return this.sMovementService.stockIn(user.id, id, command);
   }
 
@@ -74,9 +72,7 @@ export class StockMovementController {
     @Request() { user }: RequestInterface,
     @Param('id') id: string,
     @Body() command: StockInCommand,
-  ): Promise<boolean> {
-    console.log('useeee: ', user.id);
-
+  ): Promise<StockMovementResource | boolean> {
     return this.sMovementService.stockOut(user.id, id, command);
   }
 }
