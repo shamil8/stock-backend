@@ -47,7 +47,7 @@ export class UpdateProductCommand {
   @ApiProperty({ description: 'Supplier of the product', required: false })
   @IsString()
   @IsOptional()
-  supplier!: string;
+  supplier!: string[];
 
   @ApiProperty({ description: 'Image URL of the product', required: false })
   @IsString()

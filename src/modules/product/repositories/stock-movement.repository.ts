@@ -29,7 +29,7 @@ export class StockMovementRepository {
       reason: command.reason,
       party: command.party,
       partyType: command.partyType,
-      reference: `${command.party?.toUpperCase()}-${Date.now()}`,
+      reference: command.reference,
       notes: command.notes,
     };
 
@@ -81,8 +81,8 @@ export class StockMovementRepository {
     return save;
   }
 
-  async getAll(): Promise<StockMovementResource[]> {
-    const movements = await this.stockMovementRepository
+  async getAll(from?: string, to?: string): Promise<StockMovementResource[]> {
+    const qb = this.stockMovementRepository
       .createQueryBuilder('sm')
       .leftJoinAndSelect('sm.product', 'pr')
       .leftJoinAndSelect('sm.filial', 'fl')
@@ -93,14 +93,30 @@ export class StockMovementRepository {
         'sm.type as type',
         'fl.name as filialName',
         'sm.quantity as quantity',
+        'sm.party as party',
         'sm.partyType as partyType',
         'us.firstName as userName',
         'sm.reference as reference',
         'sm.previousQuantity as previousQuantity',
         'sm.newQuantity as newQuantity',
+        'sm.notes as notes',
       ])
-      .getRawMany();
+      .orderBy('sm.createdAt', 'DESC');
 
-    return movements;
+    if (from) {
+      const [day, month, year] = from.split('-').map(Number);
+      const fromDate = new Date(Date.UTC(year, month - 1, day, 0, 0, 0));
+
+      qb.andWhere('sm.createdAt >= :from', { from: fromDate });
+    }
+
+    if (to) {
+      const [day, month, year] = to.split('-').map(Number);
+      const toDate = new Date(Date.UTC(year, month - 1, day, 23, 59, 59));
+
+      qb.andWhere('sm.createdAt <= :to', { to: toDate });
+    }
+
+    return qb.getRawMany();
   }
 }

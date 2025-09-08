@@ -49,7 +49,7 @@ export class ProductResource {
   sellingPrice!: number;
 
   @ApiProperty({ description: 'Supplier of the product', required: false })
-  supplier!: string;
+  supplier!: string[];
 
   @ApiProperty({ description: 'Image URL of the product', required: false })
   imgUrl?: string;

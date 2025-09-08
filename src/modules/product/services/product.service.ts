@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { QueryRunnerService } from '@app/database/services/query-runner.service';
+import { HttpStatus, Injectable } from '@nestjs/common';
 
+import { ExceptionLocalCode } from '../../../enums/exception-local-code';
+import { ExceptionMessage } from '../../../enums/exception-message';
+import { AppHttpException } from '../../../filters/app-http.exception';
 import { CategoryRepository } from '../../category/repositories/category.repository';
 import { FilialsProductsRepository } from '../../filials/repositories/filials-products.repository';
 import { ProductCommand } from '../dto/command/product.command';
@@ -21,36 +23,47 @@ import { ProductRepository } from '../repositories/product.repository';
 export class ProductService {
   constructor(
     private readonly productRepository: ProductRepository,
-    private readonly filialsProductsRepository: FilialsProductsRepository,
+    private readonly filialProductsRepository: FilialsProductsRepository,
     private readonly categoryRepository: CategoryRepository,
     private readonly historyRepository: HistoryRepository,
-    private readonly queryRunnerService: QueryRunnerService,
   ) {}
 
-  async create(userId: string, data: ProductCommand): Promise<ProductResource> {
-    const category = await this.categoryRepository.findById(data.name);
+  async create(
+    userId: string,
+    command: ProductCommand,
+  ): Promise<ProductResource> {
+    const product = await this.productRepository.findByName(command.name);
 
-    // TODO: Check product f exists dont add!!
-    const create = await this.productRepository.create(data);
+    if (product) {
+      throw new AppHttpException(
+        ExceptionMessage.PRODUCT_EXISTS,
+        HttpStatus.CONFLICT,
+        ExceptionLocalCode.PRODUCT_EXISTS,
+      );
+    }
+
+    const category = await this.categoryRepository.findById(command.name);
+
+    const create = await this.productRepository.create(command);
 
     await this.historyRepository.create(userId, {
       action: ProductHistoryAction.CREATE,
       entityType: ProductHistoryType.PRODUCT,
-      description: `Created product ${data.name} to stock`,
+      description: `Created product ${command.name} to stock`,
       userId: userId,
-      details: { category: category, brand: data.brand },
+      details: { category: category?.name, brand: command.brand },
     });
 
     return create;
   }
 
   async findOne(id: string): Promise<ProductResource> {
-    const product = await this.productRepository.findById(id);
-    const productInFilials = await this.getFilialByProduct(id);
+    const product = await this.productRepository.findByIdOrThrow(id);
+    const productInFilial = await this.getFilialByProduct(id);
 
     return {
       ...product,
-      productStore: productInFilials.map((item) => ({
+      productStore: productInFilial.map((item) => ({
         filialId: item.filial.id,
         filialName: item.filial.name,
         filialAddress: item.filial.address,
@@ -68,7 +81,7 @@ export class ProductService {
   }
 
   async findByName(query: ProductListQuery): Promise<ProductResource[]> {
-    return await this.productRepository.findByName(query);
+    return await this.productRepository.findByLikeName(query);
   }
 
   async update(
@@ -76,7 +89,7 @@ export class ProductService {
     id: string,
     command: UpdateProductCommand,
   ): Promise<boolean> {
-    const product = await this.productRepository.findById(id);
+    const product = await this.productRepository.findByIdOrThrow(id);
 
     const historyCommand = {
       action: ProductHistoryAction.EDIT,
@@ -93,7 +106,7 @@ export class ProductService {
   }
 
   async delete(userId: string, id: string): Promise<boolean> {
-    const product = await this.productRepository.findById(id);
+    const product = await this.productRepository.findByIdOrThrow(id);
 
     const add = await this.productRepository.delete(id);
 
@@ -109,6 +122,6 @@ export class ProductService {
   }
 
   async getFilialByProduct(productId: string) {
-    return this.filialsProductsRepository.getFilialsByProduct(productId);
+    return this.filialProductsRepository.getFilialsByProduct(productId);
   }
 }

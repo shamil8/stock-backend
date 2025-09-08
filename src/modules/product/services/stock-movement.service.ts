@@ -12,7 +12,10 @@ import {
   ProductHistoryType,
 } from '../enums/product-history.enum';
 import { ProductStatus } from '../enums/product-status.enum';
-import { StockMovemants } from '../enums/stock-movemants.enum';
+import {
+  StockMovemants,
+  StockMovemantsReason,
+} from '../enums/stock-movemants.enum';
 import { HistoryRepository } from '../repositories/history.repository';
 import { ProductRepository } from '../repositories/product.repository';
 import { StockMovementRepository } from '../repositories/stock-movement.repository';
@@ -25,9 +28,9 @@ export class StockMovementService {
     private readonly queryRunnerService: QueryRunnerService,
     private readonly filialProductsRepository: FilialsProductsRepository,
     private readonly clientRepository: ClientsRepository,
-    private readonly producHistoryRepository: HistoryRepository,
-    private readonly filialsRepository: FilialRepository,
-    private readonly userServise: UserService,
+    private readonly productHistoryRepository: HistoryRepository,
+    private readonly filialRepository: FilialRepository,
+    private readonly userService: UserService,
   ) {}
 
   async stockIn(
@@ -35,11 +38,9 @@ export class StockMovementService {
     productId: string,
     command: StockInCommand,
   ): Promise<StockMovementResource | boolean> {
-    const product = await this.productRepository.findById(productId);
-    const filial = await this.filialsRepository.getBiIdOrThrow(
-      command.filialId,
-    );
-    const user = await this.userServise.findUserById(userId);
+    const product = await this.productRepository.findByIdOrThrow(productId);
+    const filial = await this.filialRepository.getBiIdOrThrow(command.filialId);
+    const user = await this.userService.findUserById(userId);
 
     const productCount = await this.filialProductsRepository.getProductCount(
       command.filialId,
@@ -89,11 +90,16 @@ export class StockMovementService {
           'in',
           queryRunner,
         );
-      } else if (
-        command.party === StockMovemants.SUPPLIER ||
-        // TODO: Doing returnin client
-        command.party === StockMovemants.RETURN_FROM_CUSTOMER
-      ) {
+      } else {
+        if (command.party === StockMovemants.RETURN_FROM_CUSTOMER) {
+          await this.clientRepository.updatePurchase(
+            command.partyType,
+            'out',
+            product.sellingPrice * command.quantity,
+            queryRunner,
+          );
+        }
+
         await this.filialProductsRepository.update(
           command.filialId,
           productId,
@@ -112,13 +118,24 @@ export class StockMovementService {
       );
 
       // TODO: Make and command for history because of userId
-      await this.producHistoryRepository.create(userId, {
-        action: ProductHistoryAction.STOCK_IN,
+      await this.productHistoryRepository.create(userId, {
+        action:
+          command.reason === StockMovemantsReason.TRANSFER
+            ? ProductHistoryAction.TRANSFER
+            : ProductHistoryAction.STOCK_IN,
         entityType: ProductHistoryType.STOCK,
-        description: `Added 20 units ${product.name} to ${filial.name}`,
+        description: `Added ${command.quantity} units ${product.name} to ${filial.name}`,
         userId: userId,
         productId,
-        details: { filialName: filial.name, supplie: product.supplier },
+        details: {
+          filialId: command.filialId,
+          quantity: command.quantity,
+          reason: command.reason,
+          party: command.party,
+          partyType: command.partyType,
+          reference: movementCommand.reference,
+          notes: command.notes,
+        },
       }),
         queryRunner;
 
@@ -156,11 +173,9 @@ export class StockMovementService {
     productId: string,
     command: StockInCommand,
   ): Promise<StockMovementResource | boolean> {
-    const product = await this.productRepository.findById(productId);
-    const filial = await this.filialsRepository.getBiIdOrThrow(
-      command.filialId,
-    );
-    const user = await this.userServise.findUserById(userId);
+    const product = await this.productRepository.findByIdOrThrow(productId);
+    const filial = await this.filialRepository.getBiIdOrThrow(command.filialId);
+    const user = await this.userService.findUserById(userId);
 
     const productCount = await this.filialProductsRepository.getProductCount(
       command.filialId,
@@ -212,10 +227,16 @@ export class StockMovementService {
           'out',
           queryRunner,
         );
-      } else if (
-        command.party === StockMovemants.CLIENT ||
-        command.party === StockMovemants.DISCARDED
-      ) {
+      } else {
+        if (command.party === StockMovemants.CLIENT) {
+          await this.clientRepository.updatePurchase(
+            command.partyType,
+            'in',
+            product.sellingPrice * command.quantity,
+            queryRunner,
+          );
+        }
+
         await this.filialProductsRepository.update(
           command.filialId,
           productId,
@@ -234,13 +255,24 @@ export class StockMovementService {
 
       await this.queryRunnerService.finish(queryRunner);
 
-      await this.producHistoryRepository.create(userId, {
-        action: ProductHistoryAction.STOCK_IN,
+      await this.productHistoryRepository.create(userId, {
+        action:
+          command.reason === StockMovemantsReason.TRANSFER
+            ? ProductHistoryAction.TRANSFER
+            : ProductHistoryAction.STOCK_OUT,
         entityType: ProductHistoryType.STOCK,
-        description: `Removed 20 units ${product.name} - ${command.reason}`,
+        description: `Removed ${command.quantity} units ${product.name} - ${command.reason}`,
         userId: userId,
         productId,
-        details: { filialName: filial.name, supplier: product.supplier },
+        details: {
+          filialId: command.filialId,
+          quantity: command.quantity,
+          reason: command.reason,
+          party: command.party,
+          partyType: command.partyType,
+          reference: movementCommand.reference,
+          notes: command.notes,
+        },
       });
 
       const inserted = stockOut.raw[0];
@@ -270,7 +302,7 @@ export class StockMovementService {
     }
   }
 
-  getAll(): Promise<StockMovementResource[]> {
-    return this.sMovementRepository.getAll();
+  getAll(from?: string, to?: string): Promise<StockMovementResource[]> {
+    return this.sMovementRepository.getAll(from, to);
   }
 }

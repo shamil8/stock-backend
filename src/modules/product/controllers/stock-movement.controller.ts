@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -14,6 +15,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+import { DateListQuery } from '../../../dto/query/date-list.query';
 import { JwtAccessGuard } from '../../auth/guards/jwt-access.guard';
 import { RequestInterface } from '../../auth/interfaces/request.interface';
 import { StockInCommand } from '../dto/command/stock-in.command';
@@ -34,8 +36,10 @@ export class StockMovementController {
     description: 'Got all stock movements',
     type: StockMovementResource,
   })
-  get(): Promise<StockMovementResource[]> {
-    return this.sMovementService.getAll();
+  get(@Query() query: DateListQuery): Promise<StockMovementResource[]> {
+    console.log('froom', query.from, 'to', query.to);
+
+    return this.sMovementService.getAll(query.from, query.to);
   }
 
   @Post('/:id')

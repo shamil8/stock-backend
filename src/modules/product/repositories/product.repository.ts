@@ -20,7 +20,7 @@ export class ProductRepository {
     private readonly categoryRepository: CategoryRepository,
   ) {}
 
-  async create(command: ProductCommand) {
+  async create(command: ProductCommand): Promise<ProductResource> {
     await this.categoryRepository.findByIdOrFail(command.categoryId);
 
     const product = this.productRepository.create({ ...command });
@@ -29,10 +29,14 @@ export class ProductRepository {
   }
 
   async getAll(): Promise<ProductResource[]> {
-    return await this.productRepository.createQueryBuilder('p').getMany();
+    return await this.productRepository
+      .createQueryBuilder('p')
+      .leftJoinAndSelect('p.filials', 'f')
+      .orderBy('p.name', 'ASC')
+      .getMany();
   }
 
-  async findById(id: string): Promise<ProductResource> {
+  async findByIdOrThrow(id: string): Promise<ProductResource> {
     const product = await this.productRepository
       .createQueryBuilder('p')
       .where('p.id = :id', { id })
@@ -61,7 +65,7 @@ export class ProductRepository {
     return products;
   }
 
-  async findByName(query: ProductListQuery): Promise<ProductResource[]> {
+  async findByLikeName(query: ProductListQuery): Promise<ProductResource[]> {
     const qb = this.productRepository.createQueryBuilder('p');
 
     if (query.name) {
@@ -73,12 +77,21 @@ export class ProductRepository {
     return products;
   }
 
+  async findByName(name: string) {
+    const product = await this.productRepository
+      .createQueryBuilder('p')
+      .where('p.name = :name', { name })
+      .getOne();
+
+    return product;
+  }
+
   async update(
     id: string,
     command: UpdateProductCommand,
     queryRunner?: QueryRunner,
   ): Promise<UpdateResult> {
-    await this.findById(id);
+    await this.findByIdOrThrow(id);
 
     const update = await this.productRepository
       .createQueryBuilder('p', queryRunner)
@@ -92,8 +105,6 @@ export class ProductRepository {
   }
 
   async delete(id: string, queryRunner?: QueryRunner): Promise<boolean> {
-    await this.findById(id);
-
     await this.productRepository
       .createQueryBuilder('c', queryRunner)
       .useTransaction(!!queryRunner)

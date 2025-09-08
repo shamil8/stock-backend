@@ -1,15 +1,15 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class changeProductStatus1756892190101 implements MigrationInterface {
+export class changedProductSupplier1757332849071 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "stock"."products" ALTER COLUMN "status" SET DEFAULT 'out-of-stock'`,
+      `ALTER TABLE "stock"."products" ALTER COLUMN "supplier" SET DEFAULT '{}'`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "stock"."products" ALTER COLUMN "status" SET DEFAULT 'Out of stock'`,
+      `ALTER TABLE "stock"."products" ALTER COLUMN "supplier" DROP DEFAULT`,
     );
   }
 }

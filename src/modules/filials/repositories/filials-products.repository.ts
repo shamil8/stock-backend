@@ -53,10 +53,14 @@ export class FilialsProductsRepository {
 
     const setCount = type === 'in' ? '+' : '-';
 
-    if ((type = 'out')) {
+    console.log('setCount: ', type);
+
+    if (type === 'out') {
       const productCount = await this.getProductCount(filialId, productId);
 
-      if (productCount < count) {
+      console.log('productCount', productCount, 'count', count);
+
+      if (!productCount || productCount < count) {
         throw new AppHttpException(
           ExceptionMessage.PRODUCT_NOT_ENOUGH,
           HttpStatus.BAD_REQUEST,
@@ -64,6 +68,8 @@ export class FilialsProductsRepository {
         );
       }
     }
+
+    console.log('adddddd');
 
     if (inc) {
       return await this.filialsProductsRepository

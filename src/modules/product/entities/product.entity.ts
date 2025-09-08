@@ -36,8 +36,8 @@ export class ProductEntity extends BaseEntity {
   @Column({ type: 'decimal', nullable: false })
   sellingPrice!: number;
 
-  @Column({ type: 'text', nullable: false })
-  supplier!: string;
+  @Column('text', { array: true, nullable: false, default: [] })
+  supplier!: string[];
 
   @Column({ nullable: true })
   imgUrl?: string;

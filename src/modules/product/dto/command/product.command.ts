@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class ProductCommand {
   @ApiProperty({ example: 'iphone 13 pro', description: 'Name of the product' })
@@ -64,13 +70,14 @@ export class ProductCommand {
   sellingPrice!: number;
 
   @ApiProperty({
-    example: 'Siyoma',
+    example: ['Siyoma'],
     description: 'Supplier of the product',
     required: false,
   })
-  @IsString()
+  @IsString({ each: true })
   @IsOptional()
-  supplier!: string;
+  @IsArray()
+  supplier!: string[];
 
   @ApiProperty({
     example:

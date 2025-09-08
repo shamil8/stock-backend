@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Put, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Put,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -6,6 +14,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+import { DateListQuery } from '../../../dto/query/date-list.query';
 import { JwtAccessGuard } from '../../auth/guards/jwt-access.guard';
 import { RequestInterface } from '../../auth/interfaces/request.interface';
 import { HistoryCommand } from '../dto/command/history.command';
@@ -44,7 +53,7 @@ export class HistoriesController {
     type: HistoryResource,
     description: 'Got a list of all histories',
   })
-  getAllHistories(): Promise<HistoryResource[]> {
-    return this.historyService.gelAll();
+  getAllHistories(@Query() date: DateListQuery): Promise<HistoryResource[]> {
+    return this.historyService.gelAll(date.from, date.to);
   }
 }

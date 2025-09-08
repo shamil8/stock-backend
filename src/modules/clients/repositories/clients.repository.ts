@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 
 import { ExceptionLocalCode } from '../../../enums/exception-local-code';
 import { ExceptionMessage } from '../../../enums/exception-message';
@@ -89,5 +89,32 @@ export class ClientsRepository {
       .execute();
 
     return true;
+  }
+
+  async updatePurchase(
+    id: string,
+    type: 'in' | 'out',
+    amount: number,
+    queryRunner?: QueryRunner,
+  ): Promise<ClientsResource> {
+    const client = await this.findClientByIdOrThrow(id);
+
+    if (type === 'in') {
+      client.totalPurchases += amount;
+    } else {
+      client.totalPurchases -= amount;
+    }
+
+    client.lastPurchase = new Date();
+
+    await this.clientsRepository
+      .createQueryBuilder('c', queryRunner)
+      .useTransaction(!!queryRunner)
+      .update()
+      .set(client)
+      .where('id = :id', { id })
+      .execute();
+
+    return client;
   }
 }

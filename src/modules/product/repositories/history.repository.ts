@@ -32,9 +32,28 @@ export class HistoryRepository {
     return command;
   }
 
-  async getAllHistory(): Promise<ProductHistoryEntity[]> {
-    return await this.historyRepository
-      .createQueryBuilder('product_histories')
-      .getMany();
+  async getAllHistory(
+    from?: string,
+    to?: string,
+  ): Promise<ProductHistoryEntity[]> {
+    const qb = await this.historyRepository
+      .createQueryBuilder('ph')
+      .orderBy('ph.createdAt', 'DESC');
+
+    if (from) {
+      const [day, month, year] = from.split('-').map(Number);
+      const fromDate = new Date(Date.UTC(year, month - 1, day, 0, 0, 0));
+
+      qb.andWhere('ph.createdAt >= :from', { from: fromDate });
+    }
+
+    if (to) {
+      const [day, month, year] = to.split('-').map(Number);
+      const toDate = new Date(Date.UTC(year, month - 1, day, 23, 59, 59));
+
+      qb.andWhere('ph.createdAt <= :to', { to: toDate });
+    }
+
+    return qb.getRawMany();
   }
 }
