@@ -3,7 +3,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 
 import { StockMovementEntity } from '../../product/entities/stock-movement.entity';
 import { UserEntity } from '../../users/entities/user.entity';
-import { FilialStatusEnum, FilialTypeEnum } from '../enums/filial.enum';
+import { FilialStatus, FilialType } from '../enums/filial.enum';
 import { FilialsProductsEntity } from './filials-products.entity';
 
 @Entity({ schema: 'filials', name: 'filials' })
@@ -12,7 +12,7 @@ export class FilialsEntity extends BaseEntity {
   name!: string;
 
   @Column({ nullable: false })
-  type!: FilialTypeEnum;
+  type!: FilialType;
 
   @Column({ nullable: true })
   address?: string;
@@ -33,7 +33,7 @@ export class FilialsEntity extends BaseEntity {
   manager?: string;
 
   @Column({ nullable: false })
-  status!: FilialStatusEnum;
+  status!: FilialStatus;
 
   @Column()
   openingHours!: string;

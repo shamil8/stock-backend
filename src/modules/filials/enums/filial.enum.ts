@@ -1,10 +1,10 @@
-export enum FilialTypeEnum {
+export enum FilialType {
   WAREHOUSE = 'warehouse',
   RETAIL = 'retail',
   ONLINE = 'online',
 }
 
-export enum FilialStatusEnum {
+export enum FilialStatus {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
   MAINTENANCE = 'maintenance',

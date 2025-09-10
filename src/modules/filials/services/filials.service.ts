@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FilialCommand } from '../dto/command/filial.command';
+import { UpdateFilialCommand } from '../dto/command/update-filial.command';
 import { FilialRepository } from '../repositories/filial.repository';
 import { FilialsProductsRepository } from '../repositories/filials-products.repository';
 
@@ -21,5 +22,9 @@ export class FilialsService {
 
   getAllFilials() {
     return this.filialsRepository.getAllFilials();
+  }
+
+  updateFilial(id: string, command: UpdateFilialCommand) {
+    return this.filialsRepository.updateFilial(id, command);
   }
 }

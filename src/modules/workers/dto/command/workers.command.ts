@@ -73,14 +73,6 @@ export class WorkersCommand {
   status?: WorkerStatusEnum;
 
   @ApiProperty({
-    example: 'Ali Valiyev',
-    description: 'Manager of the worker',
-  })
-  @IsOptional()
-  @IsString()
-  manager?: string;
-
-  @ApiProperty({
     example: ['Sales', 'Leadership', 'CRM', 'Negotiation'],
     description: 'Skills of the worker',
     type: [String],

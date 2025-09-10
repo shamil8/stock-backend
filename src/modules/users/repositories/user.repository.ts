@@ -97,6 +97,22 @@ export class UserRepository {
     return `${email.split('@')[0]}_${getNANOID()}`;
   }
 
+  async getAllUsers() {
+    return this.userRepository
+      .createQueryBuilder('u')
+      .select([
+        'u.id as id',
+        'u.firstName AS firstName',
+        'u.lastName AS lastName',
+        'u.email AS email',
+        'u.department AS department',
+        'u.role AS role',
+        'u.avatar AS avatar',
+        'u.filialsId AS filialId',
+      ])
+      .getRawMany();
+  }
+
   async uploadAvatar(userId: string, fileName: string): Promise<boolean> {
     const user = await this.findById(userId);
 

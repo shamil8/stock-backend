@@ -5,6 +5,7 @@ import { LoggerModule } from '@app/logger/logger.module';
 import { RabbitModule } from '@app/rabbit/rabbit.module';
 
 import { rateLimitOptions } from './constants/rate-limit';
+import { ChatModule } from './modules/AI-chat/chat.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CategoryModule } from './modules/category/category.module';
 import { ClientsModule } from './modules/clients/clients.module';
@@ -39,6 +40,7 @@ import { WorkersModule } from './modules/workers/workers.module';
     WorkersModule,
     FilialsModule,
     FinanceModule,
+    ChatModule,
   ],
 })
 export class AppModule {}

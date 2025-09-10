@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { FilialCommand } from '../dto/command/filial.command';
+import { UpdateFilialCommand } from '../dto/command/update-filial.command';
 import { FilialsService } from '../services/filials.service';
 
 @ApiTags('Filials')
@@ -31,5 +32,14 @@ export class FilialsController {
   })
   getAllFilials() {
     return this.filialsService.getAllFilials();
+  }
+
+  @Put('/:filialId')
+  @ApiOperation({
+    summary: 'Update filial',
+    description: 'Update a filial by id',
+  })
+  updateFilial(@Param('id') id: string, @Body() command: UpdateFilialCommand) {
+    return this.filialsService.updateFilial(id, command);
   }
 }

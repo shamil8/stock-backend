@@ -8,7 +8,7 @@ import {
   IsString,
 } from 'class-validator';
 
-import { FilialStatusEnum, FilialTypeEnum } from '../../enums/filial.enum';
+import { FilialStatus, FilialType } from '../../enums/filial.enum';
 
 export class FilialCommand {
   @ApiProperty({ example: 'Filial 1', description: 'Name of the filial' })
@@ -16,9 +16,9 @@ export class FilialCommand {
   @IsNotEmpty()
   name!: string;
 
-  @ApiProperty({ enum: FilialTypeEnum, description: 'Type of filial' })
-  @IsEnum(FilialTypeEnum)
-  type!: FilialTypeEnum;
+  @ApiProperty({ enum: FilialType, description: 'Type of filial' })
+  @IsEnum(FilialType)
+  type!: FilialType;
 
   @ApiProperty({
     example: '123 Street',
@@ -60,9 +60,9 @@ export class FilialCommand {
   @IsString()
   manager?: string;
 
-  @ApiProperty({ enum: FilialStatusEnum, description: 'Status of filial' })
-  @IsEnum(FilialStatusEnum)
-  status!: FilialStatusEnum;
+  @ApiProperty({ enum: FilialStatus, description: 'Status of filial' })
+  @IsEnum(FilialStatus)
+  status!: FilialStatus;
 
   @ApiProperty({ example: '09:00 - 18:00', description: 'Opening hours' })
   @IsString()

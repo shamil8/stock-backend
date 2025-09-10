@@ -15,26 +15,6 @@ import { WorkerStatusEnum } from '../../enums/workers-status.enum';
 
 export class UpdateWorkersCommand {
   @ApiProperty({
-    example: 'Salim',
-    description: 'The firstname of the worker',
-  })
-  @IsNotEmpty()
-  @MinLength(3)
-  @MaxLength(20)
-  @IsString()
-  firstName!: string;
-
-  @ApiProperty({
-    example: 'Odilov',
-    description: 'The lastname of the worker',
-  })
-  @IsOptional()
-  @MinLength(3)
-  @MaxLength(20)
-  @IsString()
-  lastName?: string;
-
-  @ApiProperty({
     example: '+992907701002',
     description: 'The phone number of the worker',
   })
@@ -53,29 +33,12 @@ export class UpdateWorkersCommand {
   address?: string;
 
   @ApiProperty({
-    example: 'Магозаи хуроквории Чорерон',
-    description: 'The department where the worker works',
-  })
-  @IsOptional()
-  @IsString()
-  department?: string;
-
-  @ApiProperty({
     example: 'Sales Manager',
     description: 'The position of the worker',
   })
   @IsOptional()
   @IsString()
   position?: string;
-
-  @ApiProperty({
-    example: UserRole.EMPLOYEE,
-    description: 'The role of the worker',
-    enum: UserRole,
-  })
-  @IsOptional()
-  @IsEnum(UserRole)
-  role?: UserRole;
 
   @ApiProperty({
     example: 5000,
@@ -100,14 +63,6 @@ export class UpdateWorkersCommand {
   @IsOptional()
   @IsEnum(WorkerStatusEnum)
   status?: WorkerStatusEnum;
-
-  @ApiProperty({
-    example: 'Ali Valiyev',
-    description: 'Manager of the worker',
-  })
-  @IsOptional()
-  @IsString()
-  manager?: string;
 
   @ApiProperty({
     example: ['Sales', 'Leadership', 'CRM', 'Negotiation'],

@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { ExceptionLocalCode } from '../../../enums/exception-local-code';
 import { ExceptionMessage } from '../../../enums/exception-message';
 import { AppHttpException } from '../../../filters/app-http.exception';
+import { ProductResource } from '../../product/dto/resources/product.resource';
 import { UserService } from '../../users/services/user.service';
 import { UpdateWorkersCommand } from '../dto/command/update-workers.command';
 import { WorkersCommand } from '../dto/command/workers.command';
@@ -22,20 +23,14 @@ export class WorkersRepository {
   toWorkerResource(entity: WorkersEntity) {
     return {
       accountId: entity.accountId,
-      firstName: entity.account?.firstName ?? '',
-      lastName: entity.account?.lastName ?? '',
-      email: entity.account?.email ?? '',
-      phone: entity.phone,
-      address: entity.address,
-      department: entity.account?.department ?? '',
-      position: entity.position,
-      role: entity.account?.role,
+      phone: entity.phone ?? undefined,
+      address: entity.address ?? undefined,
+      position: entity.position ?? undefined,
       salary: entity.salary,
       commission: entity.commission,
       status: entity.status,
-      manager: entity.manager,
-      skills: entity.skills,
-      notes: entity.notes,
+      skills: entity.skills ?? [],
+      notes: entity.notes ?? undefined,
       salesTarget: entity.salesTarget,
     };
   }
@@ -55,7 +50,7 @@ export class WorkersRepository {
       );
     }
 
-    return this.toWorkerResource(worker);
+    return worker;
   }
 
   async findByAccountIdOrThrow(id: string): Promise<WorkersResource> {
@@ -74,10 +69,11 @@ export class WorkersRepository {
       );
     }
 
-    return this.toWorkerResource(worker);
+    return worker;
   }
 
   async add(command: WorkersCommand): Promise<boolean> {
+    console.log('cooo', command);
     const account = await this.userService.findUserById(command.accountId);
 
     if (!account) {
@@ -102,13 +98,13 @@ export class WorkersRepository {
       .createQueryBuilder('w')
       .getMany();
 
-    return workers.map((w) => this.toWorkerResource(w));
+    return workers;
   }
 
   async updateWorker(
     id: string,
     command: UpdateWorkersCommand,
-  ): Promise<boolean> {
+  ): Promise<WorkersResource> {
     await this.getWorkerByIdOrThrow(id);
 
     await this.workersRepository
@@ -118,7 +114,7 @@ export class WorkersRepository {
       .where('id = :id', { id })
       .execute();
 
-    return true;
+    return await this.getWorkerByIdOrThrow(id);
   }
 
   async deleteWorker(id: string): Promise<boolean> {

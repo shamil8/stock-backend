@@ -5,6 +5,9 @@ import { UserRole } from '../../../users/enums/user-role';
 import { WorkerStatusEnum } from '../../enums/workers-status.enum';
 
 export class WorkersResource {
+  @ApiProperty({ description: 'id of worker' })
+  id!: string;
+
   @ApiProperty({
     example: 'FDS21',
     description: 'the id of the account',
@@ -13,25 +16,6 @@ export class WorkersResource {
   @IsString()
   @IsNotEmpty()
   accountId!: string;
-
-  @ApiProperty({
-    example: 'Salim',
-    description: 'The firstname of the worker',
-  })
-  firstName!: string;
-
-  @ApiProperty({
-    example: 'Odilov',
-    description: 'The lastname of the worker',
-  })
-  lastName?: string;
-
-  @ApiProperty({
-    required: true,
-    example: 'example@test.com',
-    description: 'The email of the worker',
-  })
-  email!: string;
 
   @ApiProperty({
     example: '+992907701002',
@@ -46,23 +30,10 @@ export class WorkersResource {
   address?: string;
 
   @ApiProperty({
-    example: 'Магозаи хуроквории Чорерон',
-    description: 'The department where the worker works',
-  })
-  department?: string;
-
-  @ApiProperty({
     example: 'Sales Manager',
     description: 'The position of the worker',
   })
   position?: string;
-
-  @ApiProperty({
-    example: UserRole.EMPLOYEE,
-    description: 'The role of the worker',
-    enum: UserRole,
-  })
-  role?: UserRole;
 
   @ApiProperty({
     example: 5000,
@@ -82,12 +53,6 @@ export class WorkersResource {
     enum: WorkerStatusEnum,
   })
   status?: WorkerStatusEnum;
-
-  @ApiProperty({
-    example: 'Ali Valiyev',
-    description: 'Manager of the worker',
-  })
-  manager?: string;
 
   @ApiProperty({
     example: ['Sales', 'Leadership', 'CRM', 'Negotiation'],

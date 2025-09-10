@@ -4,6 +4,8 @@ export enum UserRole {
   LOADER = 'LOADER',
   STORE = 'STORE',
   MANAGER = 'MANAGER',
-  EMPLOYEE = 'employee',
+  EMPLOYEE = 'EMPLOYEE',
   INTERN = 'INTERN',
+  VIEWER = 'VIEWER',
+  TEAM_LEAD = 'TEAM_LEAD',
 }

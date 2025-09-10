@@ -60,6 +60,6 @@ import { StockMovementService } from './services/stock-movement.service';
     StockMovementService,
     QueryRunnerService,
   ],
-  exports: [StockMovementService],
+  exports: [StockMovementService, ProductRepository],
 })
 export class ProductModule {}

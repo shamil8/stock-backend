@@ -28,6 +28,10 @@ export class UserService {
     return { rows: users.map((user) => new UserResource(user)), count };
   }
 
+  async getAllUsers() {
+    return this.userRepository.getAllUsers();
+  }
+
   async findCoreById(id: string): Promise<UserCoreResource> {
     const user = await this.userRepository.findByColumn(
       'id',

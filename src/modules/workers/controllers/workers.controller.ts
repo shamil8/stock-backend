@@ -32,7 +32,7 @@ export class WorkersController {
     summary: 'Get all workers',
     description: 'Get all workers',
   })
-  getAllWorkers(): Promise<WorkersResource[]> {
+  getAllWorkers() {
     return this.workersService.getAllWorkers();
   }
 
@@ -44,7 +44,7 @@ export class WorkersController {
   updateWorker(
     @Param('id') id: string,
     @Body() command: UpdateWorkersCommand,
-  ): Promise<boolean> {
+  ): Promise<WorkersResource> {
     return this.workersService.updateWorker(id, command);
   }
 

@@ -6,6 +6,7 @@ import { ExceptionLocalCode } from '../../../enums/exception-local-code';
 import { ExceptionMessage } from '../../../enums/exception-message';
 import { AppHttpException } from '../../../filters/app-http.exception';
 import { FilialCommand } from '../dto/command/filial.command';
+import { UpdateFilialCommand } from '../dto/command/update-filial.command';
 import { FilialsEntity } from '../entities/filials.entity';
 
 @Injectable()
@@ -53,5 +54,25 @@ export class FilialRepository {
       HttpStatus.NOT_FOUND,
       ExceptionLocalCode.FILIAL_NOT_FOUND,
     );
+  }
+
+  async getBYName(name: string) {
+    return await this.filialsRepository
+      .createQueryBuilder('f')
+      .where('f.name = :name', { name })
+      .getOne();
+  }
+
+  async updateFilial(id: string, command: UpdateFilialCommand) {
+    await this.getBiIdOrThrow(id);
+
+    await this.filialsRepository
+      .createQueryBuilder('f')
+      .update()
+      .set({ ...command })
+      .where('f.id = :id', { id })
+      .execute();
+
+    return command;
   }
 }

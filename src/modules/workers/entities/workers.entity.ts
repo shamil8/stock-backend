@@ -1,7 +1,6 @@
 import { BaseEntity } from '@app/database/entities/base.entity';
 import { BeforeInsert, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
-import { StockMovementEntity } from '../../product/entities/stock-movement.entity';
 import { UserEntity } from '../../users/entities/user.entity';
 import { WorkerStatusEnum } from '../enums/workers-status.enum';
 import { WorkersAttendanceEntity } from './workers-attendance.entity';
@@ -14,7 +13,7 @@ export class WorkersEntity extends BaseEntity {
   @Column()
   accountId!: string;
 
-  @Column()
+  @Column({ nullable: true })
   phone?: string;
 
   @Column({ nullable: true })
@@ -31,9 +30,6 @@ export class WorkersEntity extends BaseEntity {
 
   @Column({ default: WorkerStatusEnum.INACTIVE })
   status!: WorkerStatusEnum;
-
-  @Column({ nullable: true })
-  manager?: string;
 
   @Column({ type: 'simple-json', nullable: true })
   skills?: string[];

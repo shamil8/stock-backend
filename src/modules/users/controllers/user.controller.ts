@@ -86,9 +86,18 @@ export class UserController {
     description: 'Get user by id',
   })
   findById(@Param('id') id: string) {
-    console.log('idddddd', id);
-
     return this.usersService.findById(id);
+  }
+
+  @Get('/all/users')
+  @UseGuards(JwtAccessGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Get all users',
+    description: 'Get all users without lists',
+  })
+  getAllUsers() {
+    return this.usersService.getAllUsers();
   }
 
   @Put('/avatar')
