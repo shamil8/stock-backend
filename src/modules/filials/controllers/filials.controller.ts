@@ -1,5 +1,14 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { FilialCommand } from '../dto/command/filial.command';
 import { UpdateFilialCommand } from '../dto/command/update-filial.command';
@@ -18,7 +27,7 @@ export class FilialsController {
 
   @Get('/:filialId')
   @ApiOperation({
-    summary: 'Get all products',
+    summary: 'Get all products that are in filial',
     description: 'Get all products that are in this filial',
   })
   getProductsByFilial(@Param('filialId') filialId: string) {
@@ -34,12 +43,26 @@ export class FilialsController {
     return this.filialsService.getAllFilials();
   }
 
-  @Put('/:filialId')
+  @Put('/:id')
   @ApiOperation({
     summary: 'Update filial',
     description: 'Update a filial by id',
   })
   updateFilial(@Param('id') id: string, @Body() command: UpdateFilialCommand) {
     return this.filialsService.updateFilial(id, command);
+  }
+
+  @Delete('/:id')
+  @ApiOperation({
+    summary: 'Delete filial',
+    description: 'Delete filial by id',
+  })
+  @ApiOkResponse({
+    status: HttpStatus.OK,
+    description: 'Successfully deleted filial',
+    type: Boolean,
+  })
+  delete(@Param('id') id: string): Promise<boolean> {
+    return this.filialsService.delete(id);
   }
 }

@@ -54,6 +54,6 @@ export class HistoriesController {
     description: 'Got a list of all histories',
   })
   getAllHistories(@Query() date: DateListQuery): Promise<HistoryResource[]> {
-    return this.historyService.gelAll(date.from, date.to);
+    return this.historyService.getAll(date.from, date.to);
   }
 }

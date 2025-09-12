@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 import { ProductStatus } from '../../enums/product-status.enum';
 
@@ -45,12 +52,12 @@ export class UpdateProductCommand {
   sellingPrice?: number;
 
   @ApiProperty({ description: 'Supplier of the product', required: false })
-  @IsString()
+  @IsArray()
+  @IsString({ each: true })
   @IsOptional()
   supplier!: string[];
 
   @ApiProperty({ description: 'Image URL of the product', required: false })
-  @IsString()
   @IsOptional()
   imgUrl?: string;
 
@@ -70,15 +77,6 @@ export class UpdateProductCommand {
   })
   @IsOptional()
   expiryDate?: Date;
-
-  @ApiProperty({
-    description: 'Status of the product',
-    required: false,
-    default: 'Out of stock',
-  })
-  @IsString()
-  @IsOptional()
-  status?: ProductStatus;
 
   @ApiProperty({ description: 'Category ID of the product' })
   @IsOptional()

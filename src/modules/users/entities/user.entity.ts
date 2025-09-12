@@ -105,4 +105,7 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(() => TransactionEntity, (transaction) => transaction.user)
   transactions?: TransactionEntity[];
+
+  // @OneToMany(() => InvoiceEntity, (invoices) => invoices.user)
+  // invoices?: InvoiceEntity[];
 }

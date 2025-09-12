@@ -137,6 +137,8 @@ export class ProductController {
     @Param() { id }: IdParamDto,
     @Body() productDto: UpdateProductCommand,
   ): Promise<boolean> {
+    console.log('produuuucccctt: ', productDto);
+
     return this.productService.update(user.id, id, productDto);
   }
 

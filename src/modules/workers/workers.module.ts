@@ -24,5 +24,6 @@ import { WorkersAttendanceService } from './services/workers-attendance.service'
     WorkersAttendanceRepository,
     WorkersAttendanceService,
   ],
+  exports: [WorkersService],
 })
 export class WorkersModule {}

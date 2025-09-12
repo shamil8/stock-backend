@@ -19,7 +19,7 @@ export class HistoryService {
     private readonly productRepository: ProductRepository,
   ) {}
 
-  async gelAll(from?: string, to?: string): Promise<HistoryResource[]> {
+  async getAll(from?: string, to?: string): Promise<HistoryResource[]> {
     return this.repository.getAllHistory(from, to);
   }
 }

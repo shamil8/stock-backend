@@ -1,5 +1,5 @@
 import { BaseEntity } from '@app/database/entities/base.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { Unique } from 'typeorm';
 
 import { ClientStatusEnum } from '../enums/client-status.enum';
@@ -40,4 +40,7 @@ export class ClientsEntity extends BaseEntity {
 
   @Column()
   notes?: string;
+
+  // @OneToMany(() => InvoiceEntity, (invoice) => invoice.client)
+  // invoices?: InvoiceEntity[];
 }

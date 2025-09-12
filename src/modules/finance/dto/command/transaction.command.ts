@@ -1,9 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 import { PaymentMethod } from '../../enums/payment-method.enum';
-import { TransactionStatus } from '../../enums/traansaction-status.enum';
 import { TransactionType } from '../../enums/transaction-type.enum';
 
 export class TransactionCommand {
@@ -42,7 +40,7 @@ export class TransactionCommand {
     example: PaymentMethod.CASH,
     description: 'The method of payment',
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  paymentMethod!: PaymentMethod;
+  paymentMethod?: PaymentMethod | null;
 }

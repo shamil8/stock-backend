@@ -56,9 +56,8 @@ export class FilialCommand {
     description: 'Manager name',
     required: false,
   })
-  @IsOptional()
   @IsString()
-  manager?: string;
+  manager!: string;
 
   @ApiProperty({ enum: FilialStatus, description: 'Status of filial' })
   @IsEnum(FilialStatus)

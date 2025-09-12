@@ -45,6 +45,8 @@ export class WorkersController {
     @Param('id') id: string,
     @Body() command: UpdateWorkersCommand,
   ): Promise<WorkersResource> {
+    console.log('iddd', id);
+
     return this.workersService.updateWorker(id, command);
   }
 

@@ -18,11 +18,14 @@ export class TransactionEntity extends BaseEntity {
   @Column({ type: 'float', nullable: false })
   amount!: number;
 
-  @Column({ nullable: false })
-  paymentMethod!: string;
+  @Column('varchar', { nullable: true })
+  paymentMethod?: string | null;
 
   @Column({ nullable: false, default: TransactionStatus.COMPLETED })
   status!: string;
+
+  @Column({ nullable: true, type: 'float' })
+  profit?: number;
 
   @Column({ nullable: true })
   userId?: string;

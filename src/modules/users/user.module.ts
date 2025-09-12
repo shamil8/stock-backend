@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoggerModule } from '@app/logger/logger.module';
 
 import { FilialsEntity } from '../filials/entities/filials.entity';
+import { FilialsModule } from '../filials/filials.module';
 import { FilialRepository } from '../filials/repositories/filial.repository';
 import { UserController } from './controllers/user.controller';
 import { UserEntity } from './entities/user.entity';

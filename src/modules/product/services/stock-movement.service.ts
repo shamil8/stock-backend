@@ -4,6 +4,8 @@ import { QueryRunnerService } from '@app/database/services/query-runner.service'
 import { ClientsRepository } from '../../clients/repositories/clients.repository';
 import { FilialRepository } from '../../filials/repositories/filial.repository';
 import { FilialsProductsRepository } from '../../filials/repositories/filials-products.repository';
+import { PaymentMethod } from '../../finance/enums/payment-method.enum';
+import { TransactionService } from '../../finance/services/transaction.service';
 import { UserService } from '../../users/services/user.service';
 import { StockInCommand } from '../dto/command/stock-in.command';
 import { StockMovementResource } from '../dto/resources/movement.stock.resource';
@@ -14,7 +16,7 @@ import {
 import { ProductStatus } from '../enums/product-status.enum';
 import {
   StockMovemants,
-  StockMovemantsReason,
+  StockMovementsReason,
 } from '../enums/stock-movemants.enum';
 import { HistoryRepository } from '../repositories/history.repository';
 import { ProductRepository } from '../repositories/product.repository';
@@ -31,6 +33,7 @@ export class StockMovementService {
     private readonly productHistoryRepository: HistoryRepository,
     private readonly filialRepository: FilialRepository,
     private readonly userService: UserService,
+    private readonly transactionService: TransactionService,
   ) {}
 
   async stockIn(
@@ -69,6 +72,20 @@ export class StockMovementService {
       partyType: command.partyType,
       reference: `${command.party.toUpperCase()}-${Date.now()}`,
       notes: command.notes,
+    };
+
+    const transactionCommand = {
+      type: await this.transactionService.determineTransactionType(
+        command.party,
+      ),
+      category: await this.transactionService.determineCategory(command.party),
+      description: await this.transactionService.generateDescription(
+        command.party,
+        command.partyType,
+      ),
+      amount: product.sellingPrice * command.quantity,
+      paymentMethod: PaymentMethod.CASH,
+      profit: (product.sellingPrice - product.costPrice) * command.quantity,
     };
 
     const queryRunner = await this.queryRunnerService.create();
@@ -120,7 +137,7 @@ export class StockMovementService {
       // TODO: Make and command for history because of userId
       await this.productHistoryRepository.create(userId, {
         action:
-          command.reason === StockMovemantsReason.TRANSFER
+          command.reason === StockMovementsReason.TRANSFER
             ? ProductHistoryAction.TRANSFER
             : ProductHistoryAction.STOCK_IN,
         entityType: ProductHistoryType.STOCK,
@@ -138,6 +155,14 @@ export class StockMovementService {
         },
       }),
         queryRunner;
+
+      if (command.party !== StockMovemants.OTHER_FILIAL) {
+        await this.transactionService.addTransaction(
+          userId,
+          transactionCommand,
+          queryRunner,
+        );
+      }
 
       await this.queryRunnerService.finish(queryRunner);
 
@@ -208,6 +233,20 @@ export class StockMovementService {
       notes: command.notes,
     };
 
+    const transactionCommand = {
+      type: await this.transactionService.determineTransactionType(
+        command.party,
+      ),
+      category: await this.transactionService.determineCategory(command.party),
+      description: await this.transactionService.generateDescription(
+        command.party,
+        command.partyType,
+      ),
+      amount: product.sellingPrice * command.quantity,
+      paymentMethod:
+        command.party === StockMovemants.DISCARDED ? null : PaymentMethod.CASH,
+    };
+
     const queryRunner = await this.queryRunnerService.create();
 
     try {
@@ -253,11 +292,19 @@ export class StockMovementService {
         queryRunner,
       );
 
+      if (command.party !== StockMovemants.OTHER_FILIAL) {
+        await this.transactionService.addTransaction(
+          userId,
+          transactionCommand,
+          queryRunner,
+        );
+      }
+
       await this.queryRunnerService.finish(queryRunner);
 
       await this.productHistoryRepository.create(userId, {
         action:
-          command.reason === StockMovemantsReason.TRANSFER
+          command.reason === StockMovementsReason.TRANSFER
             ? ProductHistoryAction.TRANSFER
             : ProductHistoryAction.STOCK_OUT,
         entityType: ProductHistoryType.STOCK,

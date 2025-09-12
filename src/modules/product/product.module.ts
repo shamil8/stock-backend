@@ -11,6 +11,7 @@ import { FilialsEntity } from '../filials/entities/filials.entity';
 import { FilialsProductsEntity } from '../filials/entities/filials-products.entity';
 import { FilialRepository } from '../filials/repositories/filial.repository';
 import { FilialsProductsRepository } from '../filials/repositories/filials-products.repository';
+import { FinanceModule } from '../finance/finance.module';
 import { UserModule } from '../users/user.module';
 import { HistoriesController } from './controllers/histories.controller';
 import { ProductController } from './controllers/product.controller';
@@ -38,6 +39,7 @@ import { StockMovementService } from './services/stock-movement.service';
       FilialsEntity,
     ]),
     UserModule,
+    FinanceModule,
   ],
   controllers: [
     ProductController,
@@ -60,6 +62,11 @@ import { StockMovementService } from './services/stock-movement.service';
     StockMovementService,
     QueryRunnerService,
   ],
-  exports: [StockMovementService, ProductRepository],
+  exports: [
+    StockMovementService,
+    ProductRepository,
+    ProductService,
+    HistoryService,
+  ],
 })
 export class ProductModule {}

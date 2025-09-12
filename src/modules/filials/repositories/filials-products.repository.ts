@@ -90,7 +90,14 @@ export class FilialsProductsRepository {
     const products = await this.filialsProductsRepository
       .createQueryBuilder('fp')
       .leftJoinAndSelect('fp.product', 'p')
-      .select(['fp.id', 'fp.count', 'p.id', 'p.name', 'p.location', 'p.sku'])
+      .select([
+        'fp.id',
+        'fp.count',
+        'p.id',
+        'p.name',
+        'p.sellingPrice',
+        'p.sku',
+      ])
       .where('fp.filialId = :filialId', { filialId })
       .getMany();
 

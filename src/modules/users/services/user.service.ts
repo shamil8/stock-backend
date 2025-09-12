@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { PageResType } from '@app/crypto-utils/decorators/page-response.decorator';
 import { LoggerService } from '@app/logger/services/logger.service';
+import { use } from 'passport';
 
 import { ExceptionLocalCode } from '../../../enums/exception-local-code';
 import { ExceptionMessage } from '../../../enums/exception-message';

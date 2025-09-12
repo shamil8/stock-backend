@@ -10,7 +10,7 @@ import {
 
 import {
   StockMovemants,
-  StockMovemantsReason,
+  StockMovementsReason,
 } from '../../enums/stock-movemants.enum';
 
 export class StockInCommand {
@@ -25,13 +25,13 @@ export class StockInCommand {
   quantity!: number;
 
   @ApiProperty({
-    example: StockMovemantsReason.PURCHASE,
+    example: StockMovementsReason.PURCHASE,
     description: 'Reason for stock addition',
     required: true,
   })
   @IsString()
   @IsNotEmpty()
-  reason!: StockMovemantsReason;
+  reason!: StockMovementsReason;
 
   @ApiProperty({
     example: '5C65A38HDOT6',

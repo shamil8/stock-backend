@@ -5,7 +5,7 @@ export enum StockMovemantsType {
   TRANSFER = 'Transfer',
 }
 
-export enum StockMovemantsReason {
+export enum StockMovementsReason {
   PURCHASE = 'Purchase',
   TRANSFER = 'Transfer',
   RETURN = 'Return',
