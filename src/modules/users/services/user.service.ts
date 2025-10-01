@@ -92,6 +92,10 @@ export class UserService {
     return 'http://localhost:5002/api' + fileName;
   }
 
+  async lastLogin(email: string): Promise<boolean> {
+    return this.userRepository.lastLogin(email);
+  }
+
   changePassword(
     userId: string,
     command: ChangeUserPasswordCommand,

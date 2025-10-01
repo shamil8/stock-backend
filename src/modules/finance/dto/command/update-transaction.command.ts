@@ -1,7 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsString } from 'class-validator';
-
-import { PaymentMethod } from '../../enums/payment-method.enum';
+import { IsOptional, IsString } from 'class-validator';
 
 export class UpdateTransactionCommand {
   @ApiProperty({
@@ -19,13 +17,4 @@ export class UpdateTransactionCommand {
   @IsOptional()
   @IsString()
   description?: string;
-
-  @ApiProperty({
-    example: PaymentMethod.CASH,
-    description: 'Update a transaction payment method',
-  })
-  @IsOptional()
-  @IsEnum(PaymentMethod)
-  @IsString()
-  paymentMethod?: string;
 }

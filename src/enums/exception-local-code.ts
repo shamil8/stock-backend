@@ -76,6 +76,7 @@ export enum ExceptionLocalCode {
   // client
   CLIENT_NOT_FOUND = 13100,
   CLIENT_ALREADY_EXISTS,
+  REACHED_CLIENT_CREDIT_LIMIT,
 
   // filials
   FILIAL_ALREADY_EXISTS = 13200,
@@ -83,4 +84,7 @@ export enum ExceptionLocalCode {
 
   // worker
   WORKER_NOT_FOUND = 13300,
+
+  // invoice
+  INVOICE_NOT_FOUND = 13400,
 }

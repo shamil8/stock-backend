@@ -54,6 +54,8 @@ export class ProductController {
     @Request() { user }: RequestInterface,
     @Body() createProductDto: ProductCommand,
   ): Promise<ProductResource> {
+    console.log('ccc', createProductDto);
+
     return this.productService.create(user.id, createProductDto);
   }
 

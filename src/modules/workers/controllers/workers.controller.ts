@@ -56,6 +56,8 @@ export class WorkersController {
     description: 'Delete worker by id',
   })
   deleteWorker(@Param('id') id: string): Promise<boolean> {
+    console.log('iddd', id);
+
     return this.workersService.deleteWorker(id);
   }
 }

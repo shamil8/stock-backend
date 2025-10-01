@@ -12,6 +12,7 @@ import { ClientsModule } from './modules/clients/clients.module';
 import { FilialsModule } from './modules/filials/filials.module';
 import { FinanceModule } from './modules/finance/finance.module';
 import { ProductModule } from './modules/product/product.module';
+import { SalesModule } from './modules/sales/sales.module';
 import { SystemModule } from './modules/system/system.module';
 import { UserModule } from './modules/users/user.module';
 import { WorkersModule } from './modules/workers/workers.module';
@@ -41,6 +42,7 @@ import { WorkersModule } from './modules/workers/workers.module';
     FilialsModule,
     FinanceModule,
     ChatModule,
+    SalesModule,
   ],
 })
 export class AppModule {}

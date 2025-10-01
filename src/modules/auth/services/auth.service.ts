@@ -52,6 +52,8 @@ export class AuthService {
       );
     }
 
+    await this.userService.lastLogin(command.email);
+
     return this.createTokens({
       id: user.id,
       role: user.role,

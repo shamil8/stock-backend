@@ -71,9 +71,4 @@ export class FilialCommand {
   @IsInt()
   @IsOptional()
   capacity?: number;
-
-  @ApiProperty({ example: 10, description: 'Current staff', default: 0 })
-  @IsInt()
-  @IsOptional()
-  currentStaff?: number;
 }

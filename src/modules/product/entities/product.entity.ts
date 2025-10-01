@@ -3,6 +3,9 @@ import { CategoryEntity } from 'src/modules/category/entities/category.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 import { FilialsProductsEntity } from '../../filials/entities/filials-products.entity';
+import { BorrowEntity } from '../../finance/entities/borrows.entity';
+import { SalesEntity } from '../../sales/entities/sales.entity';
+import { SalesItemEntity } from '../../sales/entities/sales-item.entity';
 import { ProductStatus } from '../enums/product-status.enum';
 import { ProductHistoryEntity } from './productHistory.entity';
 import { StockMovementEntity } from './stock-movement.entity';
@@ -71,4 +74,7 @@ export class ProductEntity extends BaseEntity {
 
   @OneToMany(() => FilialsProductsEntity, (fp) => fp.product)
   filials!: FilialsProductsEntity[];
+
+  @OneToMany(() => SalesItemEntity, (invoice) => invoice.product)
+  invoices?: SalesEntity[];
 }

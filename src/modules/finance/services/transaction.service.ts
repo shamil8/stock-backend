@@ -35,6 +35,10 @@ export class TransactionService {
     return this.transactionRepository.updateTransaction(id, command);
   }
 
+  deleteTransaction(id: string) {
+    return this.transactionRepository.deleteTransaction(id);
+  }
+
   determineTransactionType(party: StockMovemants): TransactionType {
     if (party === StockMovemants.RETURN_FROM_CUSTOMER) {
       return TransactionType.EXPENSE;

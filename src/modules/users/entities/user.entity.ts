@@ -10,9 +10,11 @@ import {
 } from 'typeorm';
 
 import { FilialsEntity } from '../../filials/entities/filials.entity';
+import { BorrowEntity } from '../../finance/entities/borrows.entity';
 import { TransactionEntity } from '../../finance/entities/transaction.entity';
 import { ProductHistoryEntity } from '../../product/entities/productHistory.entity';
 import { StockMovementEntity } from '../../product/entities/stock-movement.entity';
+import { SalesEntity } from '../../sales/entities/sales.entity';
 import { CountryEntity } from '../../system/entities/country.entity';
 import { LanguageCode } from '../../system/enums/language-code';
 import { WorkersEntity } from '../../workers/entities/workers.entity';
@@ -106,6 +108,9 @@ export class UserEntity extends BaseEntity {
   @OneToMany(() => TransactionEntity, (transaction) => transaction.user)
   transactions?: TransactionEntity[];
 
-  // @OneToMany(() => InvoiceEntity, (invoices) => invoices.user)
-  // invoices?: InvoiceEntity[];
+  @OneToMany(() => SalesEntity, (invoices) => invoices.user)
+  invoices?: SalesEntity[];
+
+  @OneToMany(() => BorrowEntity, (borrows) => borrows.user)
+  borrows?: BorrowEntity[];
 }

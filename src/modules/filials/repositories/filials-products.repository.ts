@@ -53,12 +53,8 @@ export class FilialsProductsRepository {
 
     const setCount = type === 'in' ? '+' : '-';
 
-    console.log('setCount: ', type);
-
     if (type === 'out') {
       const productCount = await this.getProductCount(filialId, productId);
-
-      console.log('productCount', productCount, 'count', count);
 
       if (!productCount || productCount < count) {
         throw new AppHttpException(
@@ -68,8 +64,6 @@ export class FilialsProductsRepository {
         );
       }
     }
-
-    console.log('adddddd');
 
     if (inc) {
       return await this.filialsProductsRepository

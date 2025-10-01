@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -8,7 +9,12 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { JwtAccessGuard } from '../../auth/guards/jwt-access.guard';
 import { RequestInterface } from '../../auth/interfaces/request.interface';
@@ -54,8 +60,8 @@ export class TransactionController {
     summary: 'Get all transactions',
     description: 'Get all transactions',
   })
-  // @UseGuards(JwtAccessGuard)
-  // @ApiBearerAuth()
+  @UseGuards(JwtAccessGuard)
+  @ApiBearerAuth()
   getAllTransactions() {
     return this.transactionService.getAll();
   }
@@ -65,12 +71,27 @@ export class TransactionController {
     summary: 'Update transaction',
     description: 'Update transaction by id',
   })
-  // @UseGuards(JwtAccessGuard)
-  // @ApiBearerAuth()
+  @UseGuards(JwtAccessGuard)
+  @ApiBearerAuth()
   updateTransaction(
     @Param('id') id: string,
     @Body() command: UpdateTransactionCommand,
   ) {
     return this.transactionService.updateTransaction(id, command);
+  }
+
+  @Delete('/:id')
+  @ApiOperation({
+    summary: 'Delete transaction',
+    description: 'Delete transaction by id',
+  })
+  @ApiOkResponse({
+    type: Boolean,
+    description: 'Delete transaction successfully',
+  })
+  @UseGuards(JwtAccessGuard)
+  @ApiBearerAuth()
+  deleteTransaction(@Param('id') id: string) {
+    return this.transactionService.deleteTransaction(id);
   }
 }

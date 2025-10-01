@@ -76,7 +76,6 @@ export class ProductCommand {
   })
   @IsString({ each: true })
   @IsOptional()
-  @IsArray()
   supplier!: string[];
 
   @ApiProperty({

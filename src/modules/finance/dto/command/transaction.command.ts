@@ -43,4 +43,9 @@ export class TransactionCommand {
   @IsOptional()
   @IsString()
   paymentMethod?: PaymentMethod | null;
+
+  @ApiProperty({ example: 500, required: false })
+  @IsOptional()
+  @IsNumber()
+  profit?: number;
 }

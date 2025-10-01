@@ -41,6 +41,7 @@ export enum ExceptionMessage {
   // client
   CLIENT_NOT_FOUND = 'Client not found',
   CLIENT_ALREADY_EXISTS = 'Client already exists',
+  REACHED_CLIENT_CREDIT_LIMIT = 'Reached client credit limit',
 
   // filials
   FILIAL_ALREADY_EXISTS = 'Filial already exists',
@@ -48,4 +49,7 @@ export enum ExceptionMessage {
 
   // worker
   WORKER_NOT_FOUND = 'Worker not found',
+
+  // invoice
+  INVOICE_NOT_FOUND = 'Invoice not found',
 }

@@ -3,6 +3,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ClientTypeEnum } from '../../enums/client-type.enum';
 
 export class ClientsResource {
+  @ApiProperty({ description: 'Client ID' })
+  id!: string;
+
   @ApiProperty({
     example: 'John Doe',
     description: 'The name of the client',

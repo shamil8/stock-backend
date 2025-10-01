@@ -44,6 +44,7 @@ export class TransactionRepository {
         `SUM(CASE WHEN t.type = 'expense' THEN t.amount ELSE 0 END)`,
         'totalExpense',
       )
+      .addSelect(`SUM(COALESCE(t.profit, 0))`, 'totalProfit')
       .where('EXTRACT(YEAR FROM t.createdAt) = :year', { year })
       .groupBy('month')
       .orderBy('month', 'ASC')
@@ -70,5 +71,15 @@ export class TransactionRepository {
       .execute();
 
     return await this.getById(id);
+  }
+
+  async deleteTransaction(id: string): Promise<boolean> {
+    await this.transactionRepository
+      .createQueryBuilder()
+      .delete()
+      .where('id = :id', { id })
+      .execute();
+
+    return true;
   }
 }

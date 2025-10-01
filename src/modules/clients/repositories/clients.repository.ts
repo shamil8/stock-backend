@@ -26,6 +26,15 @@ export class ClientsRepository {
     return client;
   }
 
+  async findById(id: string): Promise<ClientsResource | null> {
+    const client = await this.clientsRepository
+      .createQueryBuilder('c')
+      .where('c.id = :id', { id })
+      .getOne();
+
+    return client ? client : null;
+  }
+
   async findClientByIdOrThrow(id: string): Promise<ClientsResource> {
     const client = await this.clientsRepository
       .createQueryBuilder('c')
@@ -61,6 +70,19 @@ export class ClientsRepository {
 
   async getAllClients(): Promise<ClientsResource[]> {
     return await this.clientsRepository.createQueryBuilder('c').getMany();
+  }
+
+  async addDebt(id: string, amount: number, queryRunner?: QueryRunner) {
+    await this.clientsRepository
+      .createQueryBuilder('c', queryRunner)
+      .useTransaction(!!queryRunner)
+      .update()
+      .set({ currentDebt: () => 'currentDebt + :amount' })
+      .where('id = :id', { id })
+      .setParameters({ amount: Number(amount) })
+      .execute();
+
+    return true;
   }
 
   async updateClient(

@@ -123,6 +123,16 @@ export class UserRepository {
     return true;
   }
 
+  async lastLogin(email: string): Promise<boolean> {
+    const user = await this.findByColumn('email', email);
+
+    user.lastLogin = new Date();
+
+    await this.userRepository.save(user);
+
+    return true;
+  }
+
   async changePassword(userId: string, command: ChangeUserPasswordCommand) {
     const user = await this.findByColumn('id', userId, [
       'id',

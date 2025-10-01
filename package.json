@@ -23,7 +23,9 @@
     "migration:generate": "yarn build && yarn run typeorm -d src/config/typeorm.config.ts migration:generate src/migrations/migration",
     "migration:create": "yarn run typeorm migration:create src/migrations/migration",
     "migration:revert": "yarn run typeorm -d src/config/typeorm.config.ts migration:revert",
-    "compodoc": "npx @compodoc/compodoc -p tsconfig.json -s --port 30080"
+    "compodoc": "npx @compodoc/compodoc -p tsconfig.json -s --port 30080",
+    "docker:up": "cd docker && docker-compose -f docker-compose.local.yml up -d",
+    "docker:down": "cd docker && docker-compose -f docker-compose.local.yml down"
   },
   "dependencies": {
     "@golevelup/nestjs-rabbitmq": "^5.1.0",
