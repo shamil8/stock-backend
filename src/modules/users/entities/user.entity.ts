@@ -55,7 +55,7 @@ export class UserEntity extends BaseEntity {
   @Column({ select: false })
   password!: string;
 
-  @Column({ nullable: true, type: 'timestamptz' })
+  @Column({ nullable: true })
   lastLogin?: Date;
 
   @Column({ nullable: true })

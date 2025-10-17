@@ -1,5 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { QueryRunnerService } from '@app/database/services/query-runner.service';
+import { log } from 'winston';
 
 import { ExceptionLocalCode } from '../../../enums/exception-local-code';
 import { ExceptionMessage } from '../../../enums/exception-message';
@@ -49,7 +50,8 @@ export class SalesService {
 
         if (
           command.borrow &&
-          checkClient.currentDebt! + command.total > checkClient.creditLimit!
+          Number(checkClient.currentDebt)! + command.total >
+            Number(checkClient.creditLimit)!
         ) {
           throw new AppHttpException(
             ExceptionMessage.REACHED_CLIENT_CREDIT_LIMIT,
@@ -101,9 +103,17 @@ export class SalesService {
     command: UpdateInvoiceStatusCommand,
     userId: string,
   ) {
+    console.log('0000-0000');
     const sale = await this.salesRepository.findById(saleId);
 
-    if (command.status === InvoiceStatus.PAID) {
+    console.log('11111111');
+
+    console.log('statuuuuusss: ', command.status, sale.status);
+
+    if (
+      command.status === InvoiceStatus.PAID ||
+      command.status === InvoiceStatus.BORROW
+    ) {
       let profit = 0;
 
       if (sale) {
@@ -120,22 +130,27 @@ export class SalesService {
         profit = profitPerProduct.reduce((sum, p) => sum + p, 0);
       }
 
-      console.log('afffterrrsale');
+      console.log('22222222');
+
       const user = await this.userService.findUserById(userId);
 
       let transactionType = TransactionType.INCOME;
 
       const queryRunner = await this.queryRunnerService.create();
 
+      console.log('is borrow: ', sale.isBorrow);
       try {
         if (sale.isBorrow) {
+          console.log('borrow');
+
           if (sale.clientId) {
             await this.clientsRepository.addDebt(
               sale.clientId,
               sale.total,
               queryRunner,
             );
-            transactionType = TransactionType.EXPENSE;
+            console.log('client borrow');
+            transactionType = TransactionType.BORROW;
           }
 
           await this.borrowRepository.addBorrow(
@@ -154,6 +169,20 @@ export class SalesService {
             },
             queryRunner,
           );
+          console.log('added borrow');
+        }
+
+        console.log('blabla', sale.total, typeof sale.total);
+
+        if (sale.clientId && !sale.isBorrow) {
+          await this.clientsRepository.updatePurchase(
+            sale.clientId,
+            'in',
+            Number(sale.total),
+            queryRunner,
+          );
+          console.log(Number(sale.total));
+          console.log('end blabla');
         }
 
         // await this.filialProductRepository.update(user.filialsId, )
@@ -161,7 +190,7 @@ export class SalesService {
         await this.transactionRepository.addTransaction(userId, {
           type: transactionType,
           category: 'Sales Revenue',
-          description: `${sale.clientName ? sale.clientName + 'купил' : 'продаж'} купил продукты`,
+          description: `${sale.clientName ? sale.clientName + 'купил' : 'продаж'} продукты`,
           amount: sale.total,
           paymentMethod: sale.paymentMethod,
           profit: transactionType === TransactionType.INCOME ? profit : 0,

@@ -23,6 +23,11 @@ import { TransactionService } from './services/transaction.service';
     BorrowsRepository,
     BorrowService,
   ],
-  exports: [TransactionService, BorrowsRepository, TransactionRepository],
+  exports: [
+    TransactionService,
+    BorrowsRepository,
+    TransactionRepository,
+    BorrowService,
+  ],
 })
 export class FinanceModule {}

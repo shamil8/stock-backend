@@ -5,4 +5,5 @@ export enum InvoiceStatus {
   SENT = 'sent',
   OVERDUE = 'overdue',
   PAID = 'paid',
+  BORROW = 'borrow',
 }

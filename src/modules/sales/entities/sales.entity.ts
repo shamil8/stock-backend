@@ -52,7 +52,7 @@ export class SalesEntity extends BaseEntity {
   @Column()
   status!: InvoiceStatus;
 
-  @Column()
+  @Column({ nullable: true })
   paymentMethod!: PaymentMethod;
 
   @Column({ type: 'text', nullable: true })

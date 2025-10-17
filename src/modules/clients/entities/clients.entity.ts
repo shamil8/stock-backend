@@ -27,13 +27,13 @@ export class ClientsEntity extends BaseEntity {
   @Column({ default: ClientStatusEnum.ACTIVE })
   status!: ClientStatusEnum;
 
-  @Column({ default: 0 })
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   creditLimit?: number;
 
-  @Column({ default: 0 })
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   currentDebt?: number;
 
-  @Column({ default: 0 })
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   totalPurchases!: number;
 
   @Column({ nullable: true })

@@ -23,6 +23,8 @@ export class TransactionRepository {
       userId,
     });
 
+    console.log(transaction);
+
     return await this.transactionRepository
       .createQueryBuilder('t', queryRunner)
       .useTransaction(!!queryRunner)

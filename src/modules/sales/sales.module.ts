@@ -21,5 +21,6 @@ import { SalesService } from './serivces/sales.service';
   ],
   controllers: [SalesController],
   providers: [SalesService, SalesRepository],
+  exports: [SalesService],
 })
 export class SalesModule {}

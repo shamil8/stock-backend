@@ -1,8 +1,16 @@
-import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Request,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { Response } from 'express';
 
 import { JwtAccessGuard } from '../../auth/guards/jwt-access.guard';
+import { RequestInterface } from '../../auth/interfaces/request.interface';
 import { ChatCommand } from '../dto/chat.command';
 import { ChatService } from '../services/chat.service';
 
@@ -13,14 +21,22 @@ export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
   @Post()
-  async streamMessage(@Body() question: ChatCommand, @Res() res: Response) {
+  async streamMessage(
+    @Request() { user }: RequestInterface,
+    @Body() question: ChatCommand,
+    @Res() res: Response,
+  ) {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
 
-    await this.chatService.askAIStream(question.massage, (chunk) => {
-      res.write(chunk);
-    });
+    await this.chatService.askAIStream(
+      user.email,
+      question.massage,
+      (chunk) => {
+        res.write(chunk);
+      },
+    );
 
     res.end();
   }
@@ -34,7 +50,7 @@ export class ChatController {
     type: Boolean,
     description: 'Reseted the chat successfully.',
   })
-  resetHistory(): boolean {
-    return this.chatService.resetHistory();
+  resetHistory(@Request() { user }: RequestInterface): boolean {
+    return this.chatService.resetHistory(user.email);
   }
 }

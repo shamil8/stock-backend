@@ -121,10 +121,12 @@ export class ClientsRepository {
   ): Promise<ClientsResource> {
     const client = await this.findClientByIdOrThrow(id);
 
+    amount = Number(amount);
+
     if (type === 'in') {
-      client.totalPurchases += amount;
+      client.totalPurchases = Number(client.totalPurchases) + Number(amount);
     } else {
-      client.totalPurchases -= amount;
+      client.totalPurchases = Number(client.totalPurchases) + Number(amount);
     }
 
     client.lastPurchase = new Date();
@@ -133,7 +135,10 @@ export class ClientsRepository {
       .createQueryBuilder('c', queryRunner)
       .useTransaction(!!queryRunner)
       .update()
-      .set(client)
+      .set({
+        totalPurchases: client.totalPurchases,
+        lastPurchase: client.lastPurchase,
+      })
       .where('id = :id', { id })
       .execute();
 

@@ -86,9 +86,9 @@ export class InvoiceCommand {
   total!: number;
 
   @ApiProperty({ enum: PaymentMethod, example: PaymentMethod.CASH })
+  @IsOptional()
   @IsEnum(PaymentMethod)
-  @IsNotEmpty()
-  paymentMethod!: PaymentMethod;
+  paymentMethod?: PaymentMethod;
 
   @ApiProperty({ example: 'Thank you for your purchase!', required: false })
   @IsOptional()

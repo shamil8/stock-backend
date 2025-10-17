@@ -85,7 +85,7 @@ export class StockMovementService {
       ),
       amount: product.sellingPrice * command.quantity,
       paymentMethod: PaymentMethod.CASH,
-      profit: (product.sellingPrice - product.costPrice) * command.quantity,
+      profit: 0,
     };
 
     const queryRunner = await this.queryRunnerService.create();
